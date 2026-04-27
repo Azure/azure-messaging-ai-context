@@ -1795,11 +1795,4 @@ static void on_server_error(void* context)
 }
 ```
 
-### Azure DevOps PR Cross-References
-When referencing other PRs in Azure DevOps PR descriptions or comments, use the `!` prefix, not `#`:
-- `!14810235` → links to **PR** 14810235 ✅
-- `#14810235` → links to **work item** 14810235 ❌
-
-The `#` prefix always resolves to work items in ADO, so using it for PR references will create broken/incorrect links.
-
 These guidelines ensure consistency with the existing Azure C library ecosystem and maintain the high quality and reliability standards of the Azure Messaging Block Storage project.
