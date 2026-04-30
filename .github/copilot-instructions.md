@@ -33,6 +33,7 @@ Skills location: #file:./.github/skills
 - Keep PR descriptions brief and to the point
 - Summarize the change in 1-2 sentences
 - Include relevant work item or issue references if applicable
+- **Azure DevOps cross-references**: Use `!` prefix to link PRs (e.g., `!14810235`), not `#` which links to work items
 
 ### Starting Builds on GitHub PRs
 - **Trigger builds**: After creating a PR, add a comment with `/azp run <pipeline-name>` to start the CI build
