@@ -37,14 +37,21 @@ After all comments have been addressed:
 
 1. **Ask for approval** - Confirm with the user that all comments have been addressed satisfactorily
 2. **Push changes** - Push all local commits to the remote branch using `git push`
-3. **Reply to comments and mark as resolved/fixed**:
+3. **Refresh the PR description** - PR descriptions drift across review iterations as the change evolves. After pushing, re-read the current description and make sure it still accurately describes the *final* state of the PR — what it does now, not what the first draft did and not the story of how it got here. Apply the same principle as the [Code Comment Policy](#code-comment-policy): the description should make sense to someone who has never seen the prior iterations or the review thread. Concrete checks:
+   - Does any wording refer to behavior, files, types, or APIs that no longer exist in the current diff? Update or remove.
+   - Does the description still narrate "v1 did X, then reviewer suggested Y, so v2 does Z"? Rewrite as a description of Z only.
+   - Have new files, scenarios, or behavior changes been added that the description never mentioned? Add them.
+   - If the description is still accurate, leave it alone — do not edit just to mark the iteration.
+   - **GitHub PRs**: Write the new description to a file and use `gh pr edit <pr> --body-file <file>`. **Never** pass a multi-line description as an inline `--body` argument — PowerShell will mangle newlines, backticks, and `$` characters.
+   - **Azure DevOps PRs**: Write the description into a JSON body file and PATCH it via `az rest` (see the repo-level ADO description rule for the exact pattern). **Never** pass the description as an inline CLI argument to `az repos pr update`.
+4. **Reply to comments and mark as resolved/fixed**:
    - **Azure DevOps PRs**: Use ADO MCP tools
      - `ado-repo_reply_to_comment` to reply to each thread
      - `ado-repo_update_pull_request_thread` with status "Fixed" or "Resolved" (NEVER use "Closed" - the human reviewer who made the comment is expected to mark comments "Closed" after reviewing the changes)
    - **GitHub PRs**: Use GitHub CLI
      - `gh pr review` or `gh api` to reply to review comments
    - **On failure**: If updating a thread fails (e.g., `Error updating pull request thread`), retry the operation. If it continues to fail, track it for the summary.
-4. **Summarize results** - Provide a summary to the user including:
+5. **Summarize results** - Provide a summary to the user including:
    - List of all comments that were addressed
    - Any comments that failed to update (with thread IDs) so the user can manually resolve them
    - Any comments that were skipped or need clarification
@@ -96,6 +103,7 @@ Prefer **no comment** over a narration comment, and prefer **a short comment** o
 - Always build and test after each change to catch issues early
 - Commit after each comment to maintain clear history
 - Wait for user approval before pushing to allow for review of changes
+- Treat the PR description like a code comment: it should describe the **final** state of the change, not narrate the iteration history. Refresh it after every push if the change has drifted from what the description says.
 - Ask the user if they would like you to reply to comments. If yes, reply with specific details about how they were addressed
 - Use the correct platform tools (ADO MCP for Azure DevOps, GitHub MCP/CLI for GitHub)
 
