@@ -24,6 +24,7 @@ For each active comment in the PR:
 2. **Read the comment** - Understand what change is being requested
 3. **Address the comment** - Make the necessary code/documentation changes
    - If anything is unclear, ambiguous, or you get stuck, reply to that specific comment asking for clarification from the reviewer before proceeding
+   - **Do NOT leave PR-narration comments in the code** - see [Code Comment Policy](#code-comment-policy) below
 4. **Build and run unit tests** - Verify the change doesn't break anything
    - Build the affected module's unit tests
    - Run the tests and ensure they pass
@@ -47,6 +48,48 @@ After all comments have been addressed:
    - List of all comments that were addressed
    - Any comments that failed to update (with thread IDs) so the user can manually resolve them
    - Any comments that were skipped or need clarification
+
+## Code Comment Policy
+
+When applying a fix in response to a review comment, **do not add a comment to the source code that exists only to narrate the PR iteration**. The reviewer's feedback, the prior state of the diff, and the reasoning for the change all live in git history and the PR thread — they should not bleed into the committed source.
+
+### The test
+
+Before committing any new or modified comment, apply this check:
+
+> Read the final code without any knowledge of this PR. Does the comment still describe something that is **non-obvious about the code itself** (an invariant, an edge case, a subtle ordering requirement, a non-trivial "why")? If the comment only makes sense when you also know what the previous version of the diff looked like, or what a reviewer asked for, **delete it**.
+
+If you are unsure, consult the rubber-duck agent and ask it to evaluate the comment under that test.
+
+### Comments to AVOID adding
+
+These are pure PR-iteration narration and **must not** be committed:
+
+- `// Use accessor function instead of touching the field directly (per review).`
+- `// Reviewer requested we validate the input here.`
+- `// Switched from the previous approach to keep the lock scope smaller.`
+- `// This block was reordered to handle the empty case first.`
+- `// Renamed from old_name; see PR feedback.`
+- `// Note: the earlier version assumed X, which is no longer true.`
+- Any comment whose subject is "this change", "this fix", "the previous code", "the old version", "the reviewer", "the suggestion", etc.
+
+### Comments that ARE appropriate
+
+Add or keep a comment **only if you would have written the same comment when first authoring the code, with no PR involved**. Typical legitimate cases:
+
+- A non-obvious invariant or precondition the caller must satisfy.
+- An edge case that is easy to misread or regress (e.g. "len can be 0; mmap rejects zero-length maps, so short-circuit here").
+- A non-trivial reason for choosing one approach over an obvious-looking alternative, where the alternative is a real footgun (not just "we used to do X").
+- Required documentation (e.g. doc comments on public APIs, SRS/requirement tags, SAFETY blocks on `unsafe` Rust).
+- A comment the user (or the reviewer) explicitly asked you to add.
+
+### When the reviewer asks for a comment
+
+If a reviewer literally says "please add a comment explaining X", add a comment that explains **X itself** — not "added per review". Write it as if you were documenting the code from scratch.
+
+### When in doubt
+
+Prefer **no comment** over a narration comment. A clean diff with no chatter is almost always better than one with explanatory clutter that will be confusing to the next reader.
 
 ## Key Principles
 
