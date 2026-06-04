@@ -61,17 +61,64 @@ Before committing any new or modified comment, apply this check:
 
 If you are unsure, consult the rubber-duck agent and ask it to evaluate the comment under that test.
 
-### Comments to AVOID adding
+### Common smells (what reviewers actually push back on)
 
-These are pure PR-iteration narration and **must not** be committed:
+These patterns recur in real review feedback in the ELS and EBS repos. If a comment you are about to write fits any of them, delete it before committing.
 
-- `// Use accessor function instead of touching the field directly (per review).`
-- `// Reviewer requested we validate the input here.`
-- `// Switched from the previous approach to keep the lock scope smaller.`
-- `// This block was reordered to handle the empty case first.`
-- `// Renamed from old_name; see PR feedback.`
-- `// Note: the earlier version assumed X, which is no longer true.`
-- Any comment whose subject is "this change", "this fix", "the previous code", "the old version", "the reviewer", "the suggestion", etc.
+1. **Narrating the PR's purpose inside a config / manifest file.**  Example from a real PR (in `Cargo.toml`, on a dependency the PR was pinning):
+
+   ```toml
+   # Pinned to ntex-io 3.12+ for vectored-writes support (see PBI 37838143):
+   #   - ntex-io 3.10.0 added support for vectored writes + out-of-order writes
+   #     during data encoding (`BytePages` write buffer + `Encoder::encodev`)
+   #   - ntex-net 3.10.0 enabled vectored writes for tokio/compio/neon runtimes
+   ntex-io = "3.12"
+   ```
+
+   Reviewer feedback: *"remove the comment here that describes this very specific feature, it doesn't really belong here"*. The version pin already encodes the constraint; the *reason* lives in the PBI and commit message, not in the manifest.
+
+2. **A field / variable comment that just restates the name.**  Example from a struct field of type `LocalScaleUnitCache`:
+
+   ```rust
+   // Lazy cache for the resolved local scale unit. Encapsulates both the
+   // configured name (passed in at construction) and the resolved `ScaleUnit`
+   // returned by storage on the first successful call. Subsequent calls reuse
+   // the cached value and avoid a CosmosDB round-trip.
+   local_scale_unit_cache: LocalScaleUnitCache,
+   ```
+
+   Reviewer feedback: *"remove this comment"*. The type name and field name already say "lazy cache for the local scale unit"; the rest is documentation that belongs on `LocalScaleUnitCache` itself, not duplicated at every use site.
+
+3. **Narrating a test-coverage decision in production source.**  Reviewer feedback on `// Tests_SRS_*` traceability comments that had been annotated with the bot's reasoning about what tests do and don't cover: *"What is this? Remove these comments about 'SRS...is not being tested'. Don't do that"*. SRS tags are a contract; the comment must be the requirement text (per `general_coding_instructions.md`) — not a story about how the current PR decided to cover or not cover it.
+
+4. **Long "this is the production default because (ICM nnn)" justifications.**  Example from an integration test:
+
+   ```c
+   // Production default after ICM 810404837 fix. Setting this explicitly so the test is
+   // self-documenting and decoupled from the sf_test_helper default.
+   params.replica_change_role_timeout = 60000;
+   ```
+
+   Reviewer feedback: *"We can remove this comment, too much verboseness"*. The next reader can `git blame` the line for the ICM if they ever need to.
+
+5. **YAML / build comments that justify *not* doing something.**  Example from a pipeline YAML:
+
+   ```yaml
+   # NOTE: This job consumes prebuilt artifacts and runs PowerShell + SF cmdlets only;
+   # it does not invoke dotnet/MSBuild. UseDotNet@2 is intentionally NOT used here to
+   # avoid the transient releases-index.json TLS failures (e.g. AB#38036386).
+   - template : ../templates/dump_config.yml
+   ```
+
+   Reviewer feedback: *"We can remove this comment also"*. Comments that justify the absence of code (`UseDotNet@2` is not here) age badly — once someone adds that step for an unrelated reason, the comment becomes a lie.
+
+6. **"Kept as a free function for testability" / "moved here to keep X smaller" — historical narration about choices.**  Reviewer feedback: *"we can remove this comment about 'kept as a free…'"*. Whether something is a free function or a method is visible in the code. *Why* the author picked that shape during a particular PR iteration is not interesting to the next reader.
+
+7. **Self-explanatory build/script comments.**  Reviewer feedback on a `Cargo.toml` entry: *"remove the comment as I think it's somewhat self-explanatory in the Cargo.toml"*. If the line below the comment makes the comment redundant, the comment is noise.
+
+### Other forms of the same mistake
+
+Even when the smell doesn't match one of the above exactly, watch for any comment whose subject is *"this change"*, *"this fix"*, *"the previous code"*, *"the old version"*, *"the reviewer"*, *"per review"*, *"the suggestion"*, *"we used to…"*, *"originally we…"*. Those are all PR-thread artifacts. Delete them.
 
 ### Comments that ARE appropriate
 
@@ -89,7 +136,7 @@ If a reviewer literally says "please add a comment explaining X", add a comment 
 
 ### When in doubt
 
-Prefer **no comment** over a narration comment. A clean diff with no chatter is almost always better than one with explanatory clutter that will be confusing to the next reader.
+Prefer **no comment** over a narration comment, and prefer **a short comment** over a long one. A clean diff with no chatter is almost always better than one with explanatory clutter that will be confusing — or just plain stale — to the next reader. Reviewers in EBS / ELS routinely push back with phrases like *"comment not needed"*, *"too much verboseness"*, *"self-explanatory"*, *"doesn't belong here"*, and *"don't do that"* — any of those is a sign the comment should never have been written in the first place.
 
 ## Key Principles
 
