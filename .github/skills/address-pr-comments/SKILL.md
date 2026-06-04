@@ -61,64 +61,18 @@ Before committing any new or modified comment, apply this check:
 
 If you are unsure, consult the rubber-duck agent and ask it to evaluate the comment under that test.
 
-### Common smells (what reviewers actually push back on)
+### Common pitfalls — comments to AVOID adding
 
-These patterns recur in real review feedback in the ELS and EBS repos. If a comment you are about to write fits any of them, delete it before committing.
+Each rule below is a smell distilled from real reviewer pushback. If a comment you are about to write fits any of them, delete it before committing.
 
-1. **Narrating the PR's purpose inside a config / manifest file.**  Example from a real PR (in `Cargo.toml`, on a dependency the PR was pinning):
-
-   ```toml
-   # Pinned to ntex-io 3.12+ for vectored-writes support (see PBI 37838143):
-   #   - ntex-io 3.10.0 added support for vectored writes + out-of-order writes
-   #     during data encoding (`BytePages` write buffer + `Encoder::encodev`)
-   #   - ntex-net 3.10.0 enabled vectored writes for tokio/compio/neon runtimes
-   ntex-io = "3.12"
-   ```
-
-   Reviewer feedback: *"remove the comment here that describes this very specific feature, it doesn't really belong here"*. The version pin already encodes the constraint; the *reason* lives in the PBI and commit message, not in the manifest.
-
-2. **A field / variable comment that just restates the name.**  Example from a struct field of type `LocalScaleUnitCache`:
-
-   ```rust
-   // Lazy cache for the resolved local scale unit. Encapsulates both the
-   // configured name (passed in at construction) and the resolved `ScaleUnit`
-   // returned by storage on the first successful call. Subsequent calls reuse
-   // the cached value and avoid a CosmosDB round-trip.
-   local_scale_unit_cache: LocalScaleUnitCache,
-   ```
-
-   Reviewer feedback: *"remove this comment"*. The type name and field name already say "lazy cache for the local scale unit"; the rest is documentation that belongs on `LocalScaleUnitCache` itself, not duplicated at every use site.
-
-3. **Narrating a test-coverage decision in production source.**  Reviewer feedback on `// Tests_SRS_*` traceability comments that had been annotated with the bot's reasoning about what tests do and don't cover: *"What is this? Remove these comments about 'SRS...is not being tested'. Don't do that"*. SRS tags are a contract; the comment must be the requirement text (per `general_coding_instructions.md`) — not a story about how the current PR decided to cover or not cover it.
-
-4. **Long "this is the production default because (ICM nnn)" justifications.**  Example from an integration test:
-
-   ```c
-   // Production default after ICM 810404837 fix. Setting this explicitly so the test is
-   // self-documenting and decoupled from the sf_test_helper default.
-   params.replica_change_role_timeout = 60000;
-   ```
-
-   Reviewer feedback: *"We can remove this comment, too much verboseness"*. The next reader can `git blame` the line for the ICM if they ever need to.
-
-5. **YAML / build comments that justify *not* doing something.**  Example from a pipeline YAML:
-
-   ```yaml
-   # NOTE: This job consumes prebuilt artifacts and runs PowerShell + SF cmdlets only;
-   # it does not invoke dotnet/MSBuild. UseDotNet@2 is intentionally NOT used here to
-   # avoid the transient releases-index.json TLS failures (e.g. AB#38036386).
-   - template : ../templates/dump_config.yml
-   ```
-
-   Reviewer feedback: *"We can remove this comment also"*. Comments that justify the absence of code (`UseDotNet@2` is not here) age badly — once someone adds that step for an unrelated reason, the comment becomes a lie.
-
-6. **"Kept as a free function for testability" / "moved here to keep X smaller" — historical narration about choices.**  Reviewer feedback: *"we can remove this comment about 'kept as a free…'"*. Whether something is a free function or a method is visible in the code. *Why* the author picked that shape during a particular PR iteration is not interesting to the next reader.
-
-7. **Self-explanatory build/script comments.**  Reviewer feedback on a `Cargo.toml` entry: *"remove the comment as I think it's somewhat self-explanatory in the Cargo.toml"*. If the line below the comment makes the comment redundant, the comment is noise.
-
-### Other forms of the same mistake
-
-Even when the smell doesn't match one of the above exactly, watch for any comment whose subject is *"this change"*, *"this fix"*, *"the previous code"*, *"the old version"*, *"the reviewer"*, *"per review"*, *"the suggestion"*, *"we used to…"*, *"originally we…"*. Those are all PR-thread artifacts. Delete them.
+- **Narrating the PR's purpose inside a config / manifest / build file.**  E.g. `# Pinned to <X> for <feature Y> (see PBI 12345)` on a dependency pin, or `# Bumped to <ver> because <bug>`. The pin / version *is* the constraint; the *why* belongs in the commit message and work item, not in the manifest.
+- **Field, variable or argument comments that just restate the name or type.**  E.g. `// Lazy cache for the resolved foo` on a field declared `foo_cache: FooCache`. If the comment paraphrases what `FooCache` already says, drop it; if `FooCache` itself is what needs explaining, put the doc on the *type*, not at every use site.
+- **Narrating what is or isn't covered by tests, inside production source.**  E.g. `// Requirement_42_017 is not being tested by this test`, or `// (no test for this branch yet)`. Requirement / SRS tags should carry the requirement text only — not a story about what the current PR decided to cover.
+- **Long "this is the production default because (ticket nnn)" justifications next to a literal value.**  E.g. `// Production default after ICM 12345 fix. Setting this explicitly so the test is self-documenting and decoupled from the helper's default. ... = 60000;`. If a reader ever needs the ticket they can `git blame` the line; the comment as written is mostly chatter.
+- **Comments that justify the *absence* of code.**  E.g. `# NOTE: <step X> is intentionally NOT used here to avoid <transient failure Y> (see AB#12345).`. These age badly — once someone adds `<step X>` later for an unrelated reason, the comment quietly becomes a lie.
+- **Historical narration about an authoring choice.**  E.g. `// Kept as a free function for testability`, `// Moved here to keep <other thing> smaller`, `// Extracted from <other_fn> so the lock scope is tighter`. Whether something is a free function vs. a method, or where it lives, is visible in the code; *why the author shaped it that way during a particular PR iteration* is not interesting to the next reader.
+- **Comments that restate the immediately adjacent line.**  E.g. `# Run the .NET unit tests` above a YAML task already named `🧪 VsTest - Foo.UnitTests`, or `// increment counter` above `counter += 1;`. If the next line makes the comment redundant, the comment is noise.
+- **Comments whose subject is the PR itself.**  Any comment that talks about *"this change"*, *"this fix"*, *"the previous code"*, *"the old version"*, *"the reviewer"*, *"per review"*, *"the suggestion"*, *"we used to…"*, *"originally we…"* is a PR-thread artifact masquerading as a code comment. Delete it.
 
 ### Comments that ARE appropriate
 
@@ -136,7 +90,7 @@ If a reviewer literally says "please add a comment explaining X", add a comment 
 
 ### When in doubt
 
-Prefer **no comment** over a narration comment, and prefer **a short comment** over a long one. A clean diff with no chatter is almost always better than one with explanatory clutter that will be confusing — or just plain stale — to the next reader. Reviewers in EBS / ELS routinely push back with phrases like *"comment not needed"*, *"too much verboseness"*, *"self-explanatory"*, *"doesn't belong here"*, and *"don't do that"* — any of those is a sign the comment should never have been written in the first place.
+Prefer **no comment** over a narration comment, and prefer **a short comment** over a long one. A clean diff with no chatter is almost always better than one with explanatory clutter that will be confusing — or just plain stale — to the next reader. If you can imagine a reviewer reacting with *"comment not needed"*, *"too verbose"*, *"self-explanatory"*, *"doesn't belong here"*, or *"don't do that"*, the comment should never have been written in the first place.
 
 ## Key Principles
 
