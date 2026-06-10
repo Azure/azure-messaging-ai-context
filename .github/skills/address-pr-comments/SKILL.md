@@ -35,7 +35,9 @@ For each active comment in the PR:
 
 After all comments have been addressed:
 
-1. **Ask for approval** - Confirm with the user that all comments have been addressed satisfactorily
+1. **Pause only for ambiguity**:
+   - If **any** review comment was unclear or ambiguous (something a reasonable person could interpret in more than one way, or where you had to guess at the reviewer's intent), stop and ask the user how to proceed before pushing or replying. List each ambiguous comment and the interpretation you would otherwise apply.
+   - If **none** of the comments were ambiguous, proceed automatically through the remaining steps (push, refresh description, reply, resolve) without asking for approval.
 2. **Push changes** - Push all local commits to the remote branch using `git push`
 3. **Refresh the PR description** - PR descriptions drift across review iterations as the change evolves. After pushing, re-read the current description and make sure it still accurately describes the *final* state of the PR — what it does now, not what the first draft did and not the story of how it got here. Apply the same principle as the [Code Comment Policy](#code-comment-policy): the description should make sense to someone who has never seen the prior iterations or the review thread. Concrete checks:
    - Does any wording refer to behavior, files, types, or APIs that no longer exist in the current diff? Update or remove.
@@ -102,9 +104,9 @@ Prefer **no comment** over a narration comment, and prefer **a short comment** o
 - Address comments one at a time to keep changes focused and reviewable
 - Always build and test after each change to catch issues early
 - Commit after each comment to maintain clear history
-- Wait for user approval before pushing to allow for review of changes
+- Only pause for the user when a review comment was ambiguous; otherwise push, reply, and resolve automatically once all comments are addressed
 - Treat the PR description like a code comment: it should describe the **final** state of the change, not narrate the iteration history. Refresh it after every push if the change has drifted from what the description says.
-- Ask the user if they would like you to reply to comments. If yes, reply with specific details about how they were addressed
+- Reply to comments automatically with specific details about how they were addressed (unless an ambiguity pause is in effect)
 - Use the correct platform tools (ADO MCP for Azure DevOps, GitHub MCP/CLI for GitHub)
 
 ## AI Reply Format
