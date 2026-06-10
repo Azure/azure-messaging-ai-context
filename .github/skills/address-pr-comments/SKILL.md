@@ -35,7 +35,7 @@ For each active comment in the PR:
 
 After all comments have been addressed:
 
-1. **Pause only for ambiguity** - Do **not** routinely ask the user for approval before finalizing. Instead:
+1. **Pause only for ambiguity**:
    - If **any** review comment was unclear or ambiguous (something a reasonable person could interpret in more than one way, or where you had to guess at the reviewer's intent), stop and ask the user how to proceed before pushing or replying. List each ambiguous comment and the interpretation you would otherwise apply.
    - If **none** of the comments were ambiguous, proceed automatically through the remaining steps (push, refresh description, reply, resolve) without asking for approval.
 2. **Push changes** - Push all local commits to the remote branch using `git push`
