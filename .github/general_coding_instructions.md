@@ -1465,6 +1465,8 @@ TEST_FUNCTION(when_malloc_fails_then_module_function_returns_failure)
    - Corresponding `Codes_SRS_` implementation tag(s)
    - Corresponding `Tests_SRS_` unit test tag(s)
 5. **Traceability Tool Verification**: The build system can run `traceabilitytool` to verify complete coverage. **Always run `repo_validation`** (e.g., `cmake --build cmake --target ebs_repo_validation`) after any changes to spec IDs, spec text, or `Codes_SRS_`/`Tests_SRS_` comments
+   - **Rust toolchain note**: `repo_validation` compiles a Rust validator (`repo_validator_rs`) via `cargo`. The build auto-selects a toolchain — the upstream `stable` channel pinned in `rust-toolchain.toml` on public machines (`rustup`), or the Microsoft-internal `ms-prod` toolchain on internal machines (`msrustup`, which only accepts `ms-*` names). So `cmake --build cmake --target ebs_repo_validation` should just work. If it fails it prints what to do — most commonly install the internal toolchain: `msrustup toolchain install ms-prod`.
+     - If you are on an older `c-build-tools` (before the auto-select fix) and hit `US.no_ms_prefix` / "Toolchain name must start with 'ms-'", build the validator manually with an `ms-` toolchain and run it directly: `pushd deps/c-build-tools/repo_validation/src_rust; cargo +ms-prod build --release; popd` then `deps/c-build-tools/repo_validation/src_rust/target/release/repo_validator_rs.exe --repo-root <repo-root> --exclude-folders cmake,deps`. Note: `RUSTUP_TOOLCHAIN` is ignored by msrustup for the build path — use `+ms-prod` or `MSRUSTUP_TOOLCHAIN`.
 
 #### Adding New Spec IDs Workflow
 When adding new requirement spec IDs, follow this order to avoid ID conflicts and text mismatches:
