@@ -38,3 +38,13 @@ Then reference the files in `.github/copilot-instructions.md`:
 #file:../deps/azure-messaging-ai-context/.github/copilot-instructions.md
 #file:../deps/azure-messaging-ai-context/.github/general_coding_instructions.md
 ```
+
+## Review policy
+
+Pull requests opened by the agent (`aiagentpool-mrbot[bot]`) need approvals from **two** distinct humans
+with push access, on the pull request's current commit. A human-authored pull request already has two
+people in the loop, the author and the approver; when the agent writes the change the first of those is
+missing, and this restores it.
+
+The requirement reports as the `mrbot/two-human-reviewers` status, which stays **pending** until the
+approvals arrive rather than failing, because the pull request is waiting on a person rather than broken.
