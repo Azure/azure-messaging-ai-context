@@ -1352,7 +1352,7 @@ The codebase uses a comprehensive requirements traceability system to ensure com
 - Requirements use **unique specification IDs** with the format: `SRS_<MODULE_NAME>_<author_id>_<requirement_number>`
   - `SRS` = Software Requirements Specification
   - `MODULE_NAME` = Module name in uppercase (e.g., `BSDL_ADDRESS_LIST`, `BLOCK_STORAGE`)
-  - `author_id` = Two-digit author identifier (e.g., `42`, `11`, `01`)
+  - `author_id` = Two-digit identifier assigned to the developer on whose behalf the requirement is being added (e.g., `42`, `11`, `01`)
   - `requirement_number` = Sequential three-digit number (e.g., `001`, `038`, `120`)
 
 #### Requirement ID Examples
@@ -1456,7 +1456,7 @@ TEST_FUNCTION(when_malloc_fails_then_module_function_returns_failure)
 
 #### Traceability Rules
 1. **Unique IDs**: Each requirement must have a globally unique ID within the module
-2. **Sequential Numbering**: Requirement numbers should be sequential (001, 002, 003...)
+2. **Sequential Numbering**: Requirement numbers should be sequential within each module and author ID (for example, `SRS_MODULE_01_001`, `SRS_MODULE_01_002`, ...)
 3. **Consistent Text**: The requirement specification text must be **identical** in all three places:
    - Requirements `.md` file (with backticks for readability)
    - Code implementation (`Codes_SRS_` comments - no backticks)
@@ -1468,26 +1468,38 @@ TEST_FUNCTION(when_malloc_fails_then_module_function_returns_failure)
 
 #### Adding New Spec IDs Workflow
 When adding new requirement spec IDs, follow this order to avoid ID conflicts and text mismatches:
-1. **Check for the highest existing ID** in the module's `devdoc/<module>_requirements.md` file — new IDs must be higher than all existing ones
-2. **Add the new spec to the requirements `.md` file first** — this is the source of truth
-3. **Add the matching `Codes_SRS_` comment** in the source `.c` file with identical text
-4. **Add the matching `Tests_SRS_` comment** in the unit test `.c` file with identical text
-5. **Run repo validation** to confirm consistency
+1. **Determine whether the requirement is new**:
+   - When modifying an existing requirement, preserve its existing ID and author ID.
+   - When adding a new requirement, allocate a new ID using the remaining steps below.
+2. **Identify the developer represented by the change**:
+   - An agent working for a named human developer shall use that human's developer ID, not an ID copied from surrounding requirements.
+   - Look up the assignment in the consuming repository's `deps/c-build-tools/dev/developer_numbers.md`.
+   - Do not guess an ID. If the developer is missing from the mapping, ask them to claim one.
+   - A `[MrBot]` PR title does not make the author ID `66`. Use the MrBot ID only when the work is explicitly authored as MrBot rather than on behalf of a named human.
+3. **Find the next requirement number for that exact author ID** in the module's `devdoc/<module>_requirements.md` file:
+   - Search only IDs matching `SRS_<MODULE_NAME>_<author_id>_<requirement_number>`.
+   - Use the next number in that developer's sequence. If the module has no requirements for that developer, start at `001`.
+   - Never continue another developer's sequence merely because their IDs dominate the file or surround the insertion point.
+4. **Add the new spec to the requirements `.md` file first** — this is the source of truth.
+5. **Add the matching `Codes_SRS_` comment** in the source `.c` file with identical text.
+6. **Add the matching `Tests_SRS_` comment** in the unit test `.c` file with identical text.
+7. **Run repo validation** to confirm consistency.
 
 ```
-// WRONG: Invent a spec ID in the .c file without checking the .md file
-// Risk: The ID may already be used for a different spec, causing a conflict
-/*Codes_SRS_MODULE_42_269: [ function shall do X ]*/  // 42_269 already exists!
+// Existing requirements in the module use author ID 42.
+// The agent is working on behalf of a developer whose assigned ID is 01.
 
-// CORRECT: Check the .md file for the highest existing ID, then use the next one
-// In devdoc/module_requirements.md, highest is 42_327
-// So use 42_328 for the new spec:
-// 1. Add to .md:  **SRS_MODULE_42_328: [** function shall do X **]**
-// 2. Add to .c:   /*Codes_SRS_MODULE_42_328: [ function shall do X ]*/
-// 3. Add to _ut.c: /*Tests_SRS_MODULE_42_328: [ function shall do X ]*/
+// WRONG: Continue the surrounding developer's sequence.
+/*Codes_SRS_MODULE_42_328: [ function shall do X ]*/
+
+// CORRECT: Find the next ID in the represented developer's 01 sequence.
+// If this module has no existing 01 requirements, start with 01_001:
+// 1. Add to .md:   **SRS_MODULE_01_001: [** `function` shall do X. **]**
+// 2. Add to .c:    /*Codes_SRS_MODULE_01_001: [ function shall do X. ]*/
+// 3. Add to _ut.c: /*Tests_SRS_MODULE_01_001: [ function shall do X. ]*/
 ```
-6. **Tag Placement**: `Codes_SRS_` comments belong exclusively in production code (`.c` files). Unit test files must only use `Tests_SRS_` comments. Never place `Codes_SRS_` tags in test files.
-7. **Test Tag Placement**: `Tests_SRS_` tags must be placed immediately before the `TEST_FUNCTION` declaration, never inside setup or helper functions called by tests:
+8. **Tag Placement**: `Codes_SRS_` comments belong exclusively in production code (`.c` files). Unit test files must only use `Tests_SRS_` comments. Never place `Codes_SRS_` tags in test files.
+9. **Test Tag Placement**: `Tests_SRS_` tags must be placed immediately before the `TEST_FUNCTION` declaration, never inside setup or helper functions called by tests:
 
 ```c
 // CORRECT - tag before TEST_FUNCTION
@@ -1507,9 +1519,11 @@ static void setup_test_state(void)
 ```
 
 #### Author ID Assignment
-- Each developer is assigned a unique two-digit author ID
-- Use your assigned ID consistently across all modules
-- Contact the team lead to get your author ID assignment
+- Each developer is assigned a unique author ID, rendered as two digits in SRS tags (`1` becomes `01`)
+- The canonical mapping is `deps/c-build-tools/dev/developer_numbers.md` in repositories that consume c-build-tools
+- Agents shall use the ID of the developer they are currently representing
+- Use the assigned ID consistently across all modules; do not inherit the author ID of existing requirements
+- If no assignment exists, ask the developer to claim an unused ID in the canonical mapping
 
 #### Best Practices
 - Write requirements from the caller's perspective
