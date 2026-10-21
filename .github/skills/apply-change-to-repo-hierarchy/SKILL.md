@@ -141,14 +141,13 @@ After all validations pass, commit and push the changes:
 git add -A
 
 # Commit with descriptive message
-git commit -m "[MrBot] <brief description of changes>"
+git commit -m "<brief description of changes>"
 
 # Push the topic branch to remote
 git push -u origin <branch-name>
 ```
 
 Commit message guidelines:
-- Prefix with `[MrBot]` for automated changes
 - First line: brief summary (50 chars or less)
 - Keep it concise - avoid multi-line commit messages
 
@@ -160,7 +159,7 @@ Create a pull request for each modified repository:
 
 **For GitHub repositories** (use GitHub CLI):
 ```powershell
-gh pr create --title "[MrBot] <PR title>" --body "<PR description>"
+gh pr create --title "<PR title>" --body "<PR description>"
 ```
 
 **For Azure DevOps repositories** (use ADO MCP tools):
@@ -168,7 +167,7 @@ Use the `ado-repo_create_pull_request` tool:
 - `repositoryId`: The repository ID
 - `sourceRefName`: The topic branch (e.g., `refs/heads/feature/my-change`)
 - `targetRefName`: The target branch (e.g., `refs/heads/main`)
-- `title`: PR title prefixed with `[MrBot]`
+- `title`: PR title
 - `description`: PR description
 
 **Wait for the PR to be reviewed and merged before proceeding to the next repository in the hierarchy.** This ensures that when parent repos update their submodule references, the new commits exist in the submodule's main branch.
@@ -212,11 +211,11 @@ foreach ($repo in $clonedRepos) {
     
     # Commit and push
     git add -A
-    git commit -m "[MrBot] Apply changes for: $branchName"
+    git commit -m "Apply changes for: $branchName"
     git push -u origin $branchName
     
     # Create PR and wait for merge before proceeding
-    gh pr create --title "[MrBot] $branchName" --body "Part of hierarchy-wide change"
+    gh pr create --title "$branchName" --body "Part of hierarchy-wide change"
     # Wait for PR to be merged...
     
     Pop-Location
