@@ -1472,10 +1472,10 @@ When adding new requirement spec IDs, follow this order to avoid ID conflicts an
    - When modifying an existing requirement, preserve its existing ID and author ID.
    - When adding a new requirement, allocate a new ID using the remaining steps below.
 2. **Identify the developer represented by the change**:
+   - All requirements shall use a developer ID owned by a human.
    - An agent working for a named human developer shall use that human's developer ID, not an ID copied from surrounding requirements.
    - Look up the assignment in the consuming repository's `deps/c-build-tools/dev/developer_numbers.md`.
    - Do not guess an ID. If the developer is missing from the mapping, ask them to claim one.
-   - Being written by an AI agent does not make the author ID `66`. Use the MrBot ID only when the work is explicitly authored as MrBot rather than on behalf of a named human.
 3. **Find the next requirement number for that exact author ID** in the module's `devdoc/<module>_requirements.md` file:
    - Search only IDs matching `SRS_<MODULE_NAME>_<author_id>_<requirement_number>`.
    - Use the next number in that developer's sequence. If the module has no requirements for that developer, start at `001`.
