@@ -26,9 +26,6 @@ Skills location: #file:./.github/skills
 ### Target Branch
 - **Default branch**: Always create PRs targeting `master` (not `main`)
 
-### Pull Request Titles
-- **AI-Generated PRs**: When creating a pull request, prepend `[MrBot]` to the title (e.g., `[MrBot] Fix null pointer crash in storage module`)
-
 ### Pull Request Descriptions
 - Keep PR descriptions brief and to the point
 - Summarize the change in 1-2 sentences
