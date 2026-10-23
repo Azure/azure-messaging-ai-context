@@ -15,6 +15,14 @@ Agent Skills are available in this repository at `.github/skills/`. When relevan
 
 Skills location: #file:./.github/skills
 
+## Howtos
+
+Reference how-to documents live at `.github/howto/`. Unlike skills, these are not workflow recipes — they document the syntax/conventions of external systems (portals, query languages, URL grammars) so agents and engineers can build correct queries without trial and error. Consult them when the task touches one of the documented systems.
+
+| Document | Use when... |
+|---|---|
+| [How to Build Azure Watson Search URLs](./howto/how_to_build_azure_watson_urls.md) | Hunting for a crash/hang dump in Azure Watson — when an investigation has narrowed to a specific ScaleUnit, RoleInstance, PID, process name, and/or time window. Covers the `portal.watson.azure.com` OData filter grammar, field reference, URL encoding rules, and worked examples for Service Bus / Event Grid / Block Storage / geo replication. |
+
 ## Git and Source Control Guidelines
 
 ### Commit Messages
