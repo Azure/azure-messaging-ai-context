@@ -12,7 +12,10 @@ configuration:
     - if:
       - payloadType: Pull_Request
       - filesMatchPattern:
-          pattern: ^deps/*
+          pattern: (^deps/|^\.github/workflows/two-human-reviewers\.yml$)
+      - filesMatchPattern:
+          pattern: ^deps/
+          matchAny: true
       - isOpen
       then:
       - approvePullRequest:
