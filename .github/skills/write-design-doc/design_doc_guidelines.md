@@ -10,7 +10,8 @@ implementation plan, an API reference, or a record of how the design evolved.
   and recommend one.
 - **New component or feature:** its purpose, how a caller uses it, how it works, the new API, and its guarantees.
 - **Change to an existing system:** how it works today, what changes, and how old and new versions coexist. For a
-  small change, edit the existing design doc instead of writing a new one.
+  small change, edit the existing design doc: keep its structure, describe the new behavior under its existing
+  headings, and add one short section for the change with its status line, the problem and the alternatives.
 
 A doc that needs two types, or makes two independent decisions, should be two docs.
 
@@ -24,8 +25,8 @@ sections.
 2. **Summary:** the problem, the change, and its main consequence, in one or two short paragraphs.
 3. **Problem:** what breaks or costs too much today, with evidence (an ICM, a metric, numbers with units), and the
    constraints any solution must meet.
-4. **[How it works today]:** a short refresher of what the reader needs to follow the change; link existing docs for
-   the rest.
+4. **[How it works today]:** a refresher of a few bullets on what the reader needs to follow the change; link existing
+   docs for the rest.
 5. **Design:** the idea in one paragraph, a diagram of the main flow, then the details, hard parts first. For an RFC:
    the options with one line each, then each option in detail, a comparison, and the recommendation.
 6. **[Compatibility and rollout]:** when on-disk, wire or config formats change, or versions run side by side:
@@ -89,6 +90,7 @@ These belong in the PR description, the work item or the requirements doc, or no
 - Markdown (bold, italics, code spans) is fine where it helps the reader, but the doc must also read well as plain
   text. ASCII characters only: no Unicode arrows, em-dashes, curly quotes, emoji or check marks.
 - `#` headings only (convert `===` and `---` underlines when editing a doc), at most 3 levels, unnumbered.
+- Wrap prose and lists at 120 characters.
 - Prefer lists. Keep each top-level bullet to one line and nest its details. Give options, alternatives and cases a
   short bold label:
   ```
@@ -99,7 +101,8 @@ These belong in the PR description, the work item or the requirements doc, or no
 - Diagrams in mermaid, never ASCII art: sequence diagrams for interactions, flowcharts for layers or states. Show only
   the participants that matter, keep diagrams consistent with the text and each other, and don't repeat a diagram's
   steps as a list.
-- Use a table only to compare several items on the same attributes, with its columns aligned in plain text.
+- Use a table only to compare several items on the same attributes, when every cell is a few words. Align its columns
+  in plain text. If a cell needs a sentence, use a list.
 
 ## Revising after review
 
@@ -114,7 +117,9 @@ These belong in the PR description, the work item or the requirements doc, or no
 
 ## Review checklist
 
-1. List every violation of the rules above.
-2. After the Summary, can a teammate state the problem and the decision?
-3. Which sentences could be deleted or shortened without losing information?
-4. Can the core be read in one sitting? Cut or move to the appendix any section longer than its importance.
+1. Run [lint_design_doc.ps1](lint_design_doc.ps1) on the doc (`-Existing` for an existing doc being edited). It
+   checks the mechanical rules: ASCII, headings, line length, tables, status line, outline.
+2. List every other violation of the rules above.
+3. After the Summary, can a teammate state the problem and the decision?
+4. Which sentences could be deleted or shortened without losing information?
+5. Can the core be read in one sitting? Cut or move to the appendix any section longer than its importance.
