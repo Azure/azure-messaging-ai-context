@@ -14,8 +14,8 @@ Follow [design_doc_guidelines.md](design_doc_guidelines.md).
 2. **Settle the decisions.** List the decisions that shape the design: approach, which component owns what, formats,
    failure behavior. Ask the user about the ones the code doesn't settle, one at a time, each with your
    recommendation. If you can't ask, pick one and list it under Open questions.
-3. **Outline.** Pick the doc type (and whether to edit an existing doc) and write the headings with one line each before
-   writing prose.
+3. **Outline.** Pick the doc type (for a change, also the existing doc to link from) and write the headings with one
+   line each before writing prose.
 4. **Draft.**
 5. **Self-review.** Read the draft top to bottom as a teammate who hasn't seen it, run the review checklist, and fix
    every finding.

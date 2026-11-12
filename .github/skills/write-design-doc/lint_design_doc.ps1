@@ -4,7 +4,7 @@ Checks the mechanical rules of design_doc_guidelines.md. Prints one line per iss
 .PARAMETER Path
 The design doc to check.
 .PARAMETER Existing
-The doc is an existing doc being edited, so its outline is not checked.
+The doc is an existing doc being edited, so its outline and line wrapping are not checked.
 #>
 param(
     [Parameter(Mandatory)] [string] $Path,
@@ -83,6 +83,39 @@ for ($i = 0; $i -lt $lines.Count; $i++) {
 }
 Test-Table $table
 
+# A line that ends well before the rest of its paragraph or list item was broken early, usually by an edit that
+# wasn't rewrapped. Comparing with the paragraph's own widest line works for any wrap width. A link or code span that
+# starts the next line counts as one word, 20 characters of slack allow for approximate wrapping, and lines that end a
+# sentence are skipped (one sentence per line is a valid style).
+function Test-Wrap($para) {
+    if ($para.Count -lt 2) { return }
+    $width = [Math]::Min(120, ($para | ForEach-Object { $_.Text.Length } | Measure-Object -Maximum).Maximum)
+    for ($k = 0; $k -lt $para.Count - 1; $k++) {
+        $text = $para[$k].Text.TrimEnd()
+        if ($para[$k].Text -match '(  |\\)$' -or $text -match '[.:?!]$') { continue }
+        $next = [regex]::Match($para[$k + 1].Text.Trim(), '^(!?\(?\[[^\]]*\]\([^)]*\)|`[^`]*`)?\S*').Value
+        if ($text.Length + 1 + $next.Length + 20 -le $width) {
+            Add-Issue $para[$k].Line 'line ends early; rewrap the paragraph'
+        }
+    }
+}
+if (-not $Existing) {
+    $inCode = $false
+    $para = @()
+    for ($i = 0; $i -lt $lines.Count; $i++) {
+        $l = $lines[$i]
+        $fence = $l.TrimStart().StartsWith('```')
+        if ($fence) { $inCode = -not $inCode }
+        $isText = -not $inCode -and -not $fence -and $l.Trim() -and $l -notmatch '^\s*(#|\||>|<|=+\s*$|-{3,}\s*$)'
+        if (-not $isText -or $l -match '^\s*([-*+]|\d+[.)])\s') {
+            Test-Wrap $para
+            $para = @()
+        }
+        if ($isText) { $para += [pscustomobject]@{ Line = $i + 1; Text = $l } }
+    }
+    Test-Wrap $para
+}
+
 if (-not ($lines -match '^Status: \w[\w ]* \(last updated \d{4}-\d{2}-\d{2}\)\s*$')) {
     Add-Issue 1 "missing 'Status: <state> (last updated YYYY-MM-DD)' line"
 }
@@ -99,4 +132,4 @@ if (-not $Existing) {
 }
 
 $issues | ForEach-Object { $_ }
-if ($issues.Count) { exit 1 }
+exit [int]($issues.Count -gt 0)

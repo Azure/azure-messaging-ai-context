@@ -9,9 +9,9 @@ implementation plan, an API reference, or a record of how the design evolved.
 - **RFC:** the problem is clear, the solution is not. Compare options in only as much depth as the comparison needs,
   and recommend one.
 - **New component or feature:** its purpose, how a caller uses it, how it works, the new API, and its guarantees.
-- **Change to an existing system:** how it works today, what changes, and how old and new versions coexist. For a
-  small change, edit the existing design doc: keep its structure, describe the new behavior under its existing
-  headings, and add one short section for the change with its status line, the problem and the alternatives.
+- **Change to an existing system:** how it works today, what changes, and how old and new versions coexist. Write it
+  as a new doc that links to the existing design doc instead of restating it. In the existing doc, add one short
+  section: how that part works today, if the doc doesn't say, then the change in two or three sentences and a link.
 
 A doc that needs two types, or makes two independent decisions, should be two docs.
 
@@ -31,16 +31,18 @@ sections.
    the options with one line each, then each option in detail, a comparison, and the recommendation.
 6. **[Compatibility and rollout]:** when on-disk, wire or config formats change, or versions run side by side:
    deployment order, what mixed versions do, and how to roll back.
-7. **[Testing]:** only non-obvious scenarios that prove the hard parts ("a node restart starts 8 builds at once"). No
-   test lists. Not in an RFC.
+7. **[Testing]:** only non-obvious scenarios that prove the hard parts, each with its setup or fault and what must
+   hold ("a node restart starts 8 builds at once; at most 2 run"). No test lists or mocking plans. Not in an RFC.
 8. **Alternatives considered:** each rejected option and why not. Not in an RFC.
-9. **[Open questions]:** decisions that the code and the available data can't settle, each with the answer you would
-   pick.
+9. **[Open questions]:** decisions that the code and the available data can't settle. Write each question as a
+   bullet and nest the answer you would pick under it.
 10. **[Appendix]:** optional reading such as data, derivations and long examples. The doc must make sense without it.
 11. **[References]:** links to related designs and to authoritative sources for well-known algorithms the design uses.
 
 The doc reads top to bottom: introduce every term, component and section before using it, even within a section.
-When a section covers several options, components or cases, first list them with one line each.
+When a section covers several options, components or cases, first list them with one line each, in the order the
+section then describes them. Describe a piece that every option shares before the options, not as one of them. Refer
+to an option by its full label ("Option A", "the drain option"), never a bare letter.
 
 ## Depth
 
@@ -72,7 +74,7 @@ These belong in the PR description, the work item or the requirements doc, or no
 - History: earlier versions, review discussion, "originally", "corrected", comparisons with other drafts.
 - Reasoning in progress ("Actually, let me reconsider"), notes to self, TBD sections.
 - Tutorials on external technology.
-- Status notes about this design inside other docs. Another doc links to it from its References section.
+- Notes about this design wedged into another doc's text. Give them their own short section (see Doc types).
 
 ## Words
 
