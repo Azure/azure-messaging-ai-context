@@ -11,7 +11,8 @@ implementation plan, an API reference, or a record of how the design evolved.
 - **New component or feature:** its purpose, how a caller uses it, how it works, the new API, and its guarantees.
 - **Change to an existing system:** how it works today, what changes, and how old and new versions coexist. Write it
   as a new doc that links to the existing design doc instead of restating it. In the existing doc, add one short
-  section: how that part works today, if the doc doesn't say, then the change in two or three sentences and a link.
+  section with "(proposed)" in its heading and its own status line under it: how that part works today if the doc
+  doesn't say, the change in two or three sentences, and a link. Leave the existing doc's own status line alone.
 
 A doc that needs two types, or makes two independent decisions, should be two docs.
 
@@ -25,12 +26,13 @@ sections.
 2. **Summary:** the problem, the change, and its main consequence, in one or two short paragraphs.
 3. **Problem:** what breaks or costs too much today, with evidence (an ICM, a metric, numbers with units), and the
    constraints any solution must meet.
-4. **[How it works today]:** a refresher of a few bullets on what the reader needs to follow the change; link existing
-   docs for the rest.
+4. **[How it works today]:** a few bullets with only the facts the Design section relies on; link existing docs for
+   the rest.
 5. **Design:** the idea in one paragraph, a diagram of the main flow, then the details, hard parts first. For an RFC:
    the options with one line each, then each option in detail, a comparison, and the recommendation.
 6. **[Compatibility and rollout]:** when on-disk, wire or config formats change, or versions run side by side:
-   deployment order, what mixed versions do, and how to roll back.
+   deployment order, what mixed versions do, and how to roll back. Only what differs from a routine upgrade and
+   rollback; skip the section if nothing does.
 7. **[Testing]:** only non-obvious scenarios that prove the hard parts, each with its setup or fault and what must
    hold ("a node restart starts 8 builds at once; at most 2 run"). No test lists or mocking plans. Not in an RFC.
 8. **Alternatives considered:** each rejected option and why not. Not in an RFC.
@@ -41,8 +43,9 @@ sections.
 
 The doc reads top to bottom: introduce every term, component and section before using it, even within a section.
 When a section covers several options, components or cases, first list them with one line each, in the order the
-section then describes them. Describe a piece that every option shares before the options, not as one of them. Refer
-to an option by its full label ("Option A", "the drain option"), never a bare letter.
+section then describes them. Describe a piece that every option shares before the options, not as one of them. Give
+each option a letter and a short name ("Option B: SF move") and refer to it by both ("SF move (Option B)"), never by
+the letter alone.
 
 ## Depth
 

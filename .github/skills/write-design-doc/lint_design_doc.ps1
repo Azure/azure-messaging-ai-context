@@ -4,7 +4,7 @@ Checks the mechanical rules of design_doc_guidelines.md. Prints one line per iss
 .PARAMETER Path
 The design doc to check.
 .PARAMETER Existing
-The doc is an existing doc being edited, so its outline and line wrapping are not checked.
+The doc is an existing doc being edited, so its outline, line wrapping and top status line are not checked.
 #>
 param(
     [Parameter(Mandatory)] [string] $Path,
@@ -116,8 +116,15 @@ if (-not $Existing) {
     Test-Wrap $para
 }
 
-if (-not ($lines -match '^Status: \w[\w ]* \(last updated \d{4}-\d{2}-\d{2}\)\s*$')) {
+$statusLine = '^Status: \w[\w ]* \(last updated \d{4}-\d{2}-\d{2}\)\s*$'
+if (-not $Existing -and -not ($lines -match $statusLine)) {
     Add-Issue 1 "missing 'Status: <state> (last updated YYYY-MM-DD)' line"
+}
+for ($i = 0; $i -lt $lines.Count; $i++) {
+    if ($lines[$i] -match '^#+ .*\(proposed\)') {
+        $next = $lines[($i + 1)..($lines.Count - 1)] | Where-Object { $_.Trim() } | Select-Object -First 1
+        if ($next -notmatch $statusLine) { Add-Issue ($i + 1) 'proposed section needs a status line under its heading' }
+    }
 }
 
 if (-not $Existing) {
