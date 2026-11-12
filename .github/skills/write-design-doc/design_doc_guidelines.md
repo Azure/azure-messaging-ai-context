@@ -49,7 +49,8 @@ When a section covers several options, components or cases, first list them with
   consequence is worth stressing, fold it into its sentence ("stores `expires_at` in the set value operation, so it is
   replicated and persisted") instead of adding sentences about it.
 - Spend words where an implementer could go wrong: concurrency, ordering, failure and recovery, formats and
-  compatibility, limits. Routine plumbing (argument checks, logging, metric wiring) gets a line at most.
+  compatibility, limits. Routine plumbing (argument checks, logging) gets a line at most; failure behavior is design,
+  not plumbing. List metric and config names as bullets.
 - Stop when every behavior is decided. Internal structure (helper functions, file layout, internal locking) belongs
   in the code and the requirements doc, unless it is the hard part.
 - Code only for new or changed public signatures, on-disk or wire formats, and structs needed to state a contract. No
@@ -120,6 +121,7 @@ These belong in the PR description, the work item or the requirements doc, or no
 1. Run [lint_design_doc.ps1](lint_design_doc.ps1) on the doc (`-Existing` for an existing doc being edited). It
    checks the mechanical rules: ASCII, headings, line length, tables, status line, outline.
 2. List every other violation of the rules above.
-3. After the Summary, can a teammate state the problem and the decision?
-4. Which sentences could be deleted or shortened without losing information?
-5. Can the core be read in one sitting? Cut or move to the appendix any section longer than its importance.
+3. Do any two statements contradict each other?
+4. After the Summary, can a teammate state the problem and the decision?
+5. Which sentences could be deleted or shortened without losing information?
+6. Can the core be read in one sitting? Cut or move to the appendix any section longer than its importance.
