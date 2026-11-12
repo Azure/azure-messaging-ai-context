@@ -114,7 +114,8 @@ These belong in the PR description, the work item or the requirements doc, or no
 
 - Edit in place: rewrite the text a comment is about instead of adding a paragraph or section. A question about a
   sentence usually means the sentence is unclear.
-- A review round should not grow the doc; if it must, say why.
+- A wording or clarity comment should not grow the doc. A comment that changes or adds design gets the depth a first
+  draft would (see Depth), and only that.
 - Fix what the comment asks for everywhere it applies, and nothing else. Don't restructure or reformat text that no
   comment is about, even where it breaks these rules; a rewrite is a separate change.
 - If a comment changes the design, revise the whole doc, not just the section it is on.

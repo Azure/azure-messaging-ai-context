@@ -28,7 +28,8 @@ one.
      status line) are nits.
 5. Report:
    - A verdict in 3 lines or fewer: is the design sound, is it readable, the biggest problems, and roughly how long
-     the doc would be after the cuts.
+     the doc would be after the cuts. When reviewing a PR whose description lacks the write-design-doc attribution
+     line and whose doc breaks several guidelines, suggest revising it with the write-design-doc skill.
    - Findings ranked within each rating, design findings first. Report the lint output as one nit.
    - If the doc is good, say so; a good doc gets few findings.
 6. Post comments on a PR only if the user asks; otherwise report to the user.

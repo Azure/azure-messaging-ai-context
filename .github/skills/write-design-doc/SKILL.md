@@ -20,10 +20,24 @@ Follow [design_doc_guidelines.md](design_doc_guidelines.md).
 5. **Self-review.** Read the draft top to bottom as a teammate who hasn't seen it, run the review checklist, and fix
    every finding.
 6. **Cut.** Shorten or delete every paragraph that doesn't change what the reader understands, then rerun the lint.
-7. **Report** the path, the doc type and the decisions the user should double-check, in 5 lines or fewer.
+7. **Report** the path, the doc type and the decisions the user should double-check, in 5 lines or fewer, then the
+   attribution line.
 
 ## Review comments
 
 Follow "Revising after review" in the guidelines. When done, reread the whole doc for text your edits made stale or
 contradictory, run the lint and fix only findings in lines you changed. Tell the user how many words the doc gained or
 lost, and list any other problems you saw.
+
+## Attribution
+
+End the description of the doc's PR with this line, updated on every pass. If you don't edit the PR, give the line to
+the user to add.
+
+```
+Design doc written with write-design-doc (azure-messaging-ai-context@<commit>) by <model>.
+```
+
+- `<commit>`: `git log -1 --format=%h -- .` run in this skill's folder, or `unversioned` if that prints nothing.
+- `<model>`: the model name your instructions give. Add the reasoning effort or context window only if your instructions
+  state it; never guess.
