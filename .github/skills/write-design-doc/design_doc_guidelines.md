@@ -77,7 +77,6 @@ These belong in the PR description, the work item or the requirements doc, or no
 - History: earlier versions, review discussion, "originally", "corrected", comparisons with other drafts.
 - Reasoning in progress ("Actually, let me reconsider"), notes to self, TBD sections.
 - Tutorials on external technology.
-- Notes about this design wedged into another doc's text. Give them their own short section (see Doc types).
 
 ## Words
 
@@ -116,9 +115,9 @@ These belong in the PR description, the work item or the requirements doc, or no
   sentence usually means the sentence is unclear.
 - A wording or clarity comment should not grow the doc. A comment that changes or adds design gets the depth a first
   draft would (see Depth), and only that.
-- Fix what the comment asks for everywhere it applies, and nothing else. Don't restructure or reformat text that no
-  comment is about, even where it breaks these rules; a rewrite is a separate change.
-- If a comment changes the design, revise the whole doc, not just the section it is on.
+- Fix what each comment asks for everywhere it applies, including every section a design change affects, and nothing
+  else. Don't restructure or reformat text that no comment is about, even where it breaks these rules; a rewrite is a
+  separate change.
 - Check a reviewer's claim before agreeing with it.
 - Reread the whole doc and remove text your edits made stale, duplicated or contradictory.
 - Reply in 3 sentences or fewer with what changed. Explanations a future reader needs go in the doc.

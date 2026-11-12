@@ -25,9 +25,8 @@ Follow [design_doc_guidelines.md](design_doc_guidelines.md).
 
 ## Review comments
 
-Follow "Revising after review" in the guidelines. When done, reread the whole doc for text your edits made stale or
-contradictory, run the lint and fix only findings in lines you changed. Tell the user how many words the doc gained or
-lost, and list any other problems you saw.
+Follow "Revising after review" in the guidelines, then run the lint and fix only findings in lines you changed. Tell
+the user how many words the doc gained or lost, and list any other problems you saw.
 
 ## Attribution
 
