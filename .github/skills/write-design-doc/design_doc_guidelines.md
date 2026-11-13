@@ -28,8 +28,8 @@ sections.
 2. **Summary:** the problem, the change, and its main consequence, in one or two short paragraphs.
 3. **Problem:** what breaks or costs too much today, with evidence (an ICM, a metric, numbers with units), and the
    constraints any solution must meet.
-4. **[How it works today]:** a few bullets with only the facts the Design section relies on; link existing docs for
-   the rest.
+4. **[How it works today]:** at most about five bullets with only the facts the Design section relies on; link
+   existing docs for the rest.
 5. **Design:** the idea in one paragraph, a diagram of the main flow, then the details, hard parts first. For an RFC:
    the options with one line each, then each option in detail, a comparison, and the recommendation.
 6. **[Compatibility and rollout]:** only what an upgrade or rollback must do beyond a routine one, such as the order
@@ -49,17 +49,25 @@ a short name ("Option B: SF move") and refer to it by both ("SF move (Option B)"
 
 ## Depth
 
+- Keep the core, Summary through Testing, under 2,500 words; the lint checks it. A longer core usually restates
+  existing behavior or spells out what an implementer would do anyway. Cut it, or split the design.
 - Write for a teammate who knows the system. Before keeping a sentence, ask whether it is obvious from how the system
   already works and whether an implementer would find it anyway in existing docs. If both, cut it. If an obvious
   consequence is worth stressing, fold it into its sentence ("stores `expires_at` in the set value operation, so it is
-  replicated and persisted") instead of adding sentences about it.
+  replicated and persisted") instead of adding sentences about it. Leave out what the reader can derive, such as a
+  name that follows a stated pattern or what a caller can do about an error.
 - Spend words where an implementer could go wrong: concurrency, ordering, failure and recovery, formats and
   compatibility, limits. Routine plumbing (argument checks, logging) gets a line at most; failure behavior is design,
   not plumbing. List metric and config names as bullets.
 - Stop when every behavior is decided. Internal structure (helper functions, file layout, internal locking) belongs
   in the code and the requirements doc, unless it is the hard part.
-- Code only for new or changed public signatures, on-disk or wire formats, and structs needed to state a contract. No
-  function bodies, before/after diffs, or pseudo-code for straightforward logic.
+- Give the reason for a choice in the Design only when it isn't obvious, in a clause or a sentence. Arguments
+  against other choices ("X instead would ...") go under Alternatives considered.
+- Code only for new or changed public signatures and structs needed to state a contract. Show an interface once,
+  where it is defined (the RPC, not each client that mirrors it). No function bodies, before/after diffs, or
+  pseudo-code for straightforward logic.
+- Describe a change to a format as the difference ("v4 plus `expires_at`, 8 bytes, after the incarnation id") and link
+  the layout. Show a new layout as a table with a column per field and a row of sizes, like existing layouts.
 - Existing behavior gets a sentence and a link. Don't re-document existing modules, external libraries or an earlier
   phase.
 - Name a well-known algorithm when the design uses one, explain what the design needs from it, and link a source under
@@ -82,7 +90,8 @@ These belong in the PR description, the work item or the requirements doc, or no
 
 - Define each new term in one plain sentence where it first appears. Introduce few new terms; use the code's names.
   Never invent codes (A0, G3) or new labels for things that already have a name.
-- Say each fact once. If two sections need it, link one to the other.
+- Say each fact once. If two sections need it, link one to the other. When several cases behave the same, state the
+  rule once and list only the exceptions.
 - Short, declarative, present-tense sentences in short paragraphs, one topic each.
 - Function names are verbs; don't turn them into nouns. Write "calls to `get_value`" or "reading the key", not "gets".
 - No filler or sales words ("it is important to note", "key insight", "robust", "seamless", "leverage",
@@ -96,8 +105,8 @@ These belong in the PR description, the work item or the requirements doc, or no
   text. ASCII characters only: no Unicode arrows, em-dashes, curly quotes, emoji or check marks.
 - `#` headings only (convert `===` and `---` underlines when editing a doc), at most 3 levels, unnumbered.
 - Wrap prose and lists at 120 characters.
-- Prefer lists. Keep each top-level bullet to one line and nest its details. Give options, alternatives and cases a
-  short bold label:
+- Prefer lists. Keep each top-level bullet to one line. Nest details when there are several; fold a single short
+  reason into the line. Give options, alternatives and cases a short bold label:
   ```
   - **Expire only on read (no sweeper):**
       - Reading an expired key deletes it.
@@ -106,8 +115,8 @@ These belong in the PR description, the work item or the requirements doc, or no
 - Diagrams in mermaid, never ASCII art: sequence diagrams for interactions, flowcharts for layers or states. Show only
   the participants that matter, keep diagrams consistent with the text and each other, and don't repeat a diagram's
   steps as a list.
-- Use a table only to compare several items on the same attributes, when every cell is a few words. Align its columns
-  in plain text. If a cell needs a sentence, use a list.
+- Use a table only for a byte layout or to compare several items on the same attributes, when every cell is a few
+  words. Align its columns in plain text. If a cell needs a sentence, use a list.
 
 ## Revising after review
 
@@ -125,7 +134,7 @@ These belong in the PR description, the work item or the requirements doc, or no
 ## Review checklist
 
 1. Run [lint_design_doc.ps1](lint_design_doc.ps1) on the doc (`-Existing` for an existing doc being edited). It
-   checks the mechanical rules: ASCII, headings, line length and wrapping, tables, status lines, outline.
+   checks the mechanical rules: ASCII, headings, line length and wrapping, tables, status lines, outline, core length.
 2. List every other violation of the rules above.
 3. Do any two statements contradict each other?
 4. After the Summary, can a teammate state the problem and the decision?

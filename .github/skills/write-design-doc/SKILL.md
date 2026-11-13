@@ -19,7 +19,8 @@ Follow [design_doc_guidelines.md](design_doc_guidelines.md).
 4. **Draft.**
 5. **Self-review.** Read the draft top to bottom as a teammate who hasn't seen it, run the review checklist, and fix
    every finding.
-6. **Cut.** Shorten or delete every paragraph that doesn't change what the reader understands, then rerun the lint.
+6. **Cut.** Shorten or delete every paragraph that doesn't change what the reader understands, including research the
+   design doesn't depend on, then rerun the lint.
 7. **Report** the path, the doc type and the decisions the user should double-check, in 5 lines or fewer, then the
    attribution line.
 

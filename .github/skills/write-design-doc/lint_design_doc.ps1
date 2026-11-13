@@ -136,6 +136,22 @@ if (-not $Existing) {
         elseif ($idx -lt $last) { Add-Issue $h.Line "section '$($h.Title)' is out of outline order" }
         else { $last = $idx }
     }
+
+    # Core length: words from the first section through Testing, not counting mermaid diagrams.
+    $coreMax = 2500
+    $start = if ($h2) { $h2[0].Line - 1 } else { 0 }
+    $after = $h2 | Where-Object { $_.Title -match '^(alternative|open questions|appendix|references)' } | Select-Object -First 1
+    $stop = if ($after) { $after.Line - 1 } else { $lines.Count }
+    $words = 0
+    $fence = ''
+    for ($i = $start; $i -lt $stop; $i++) {
+        $t = $lines[$i].Trim()
+        if ($t.StartsWith('```')) { $fence = if ($fence) { '' } else { 'x' + $t.Substring(3).Trim() }; continue }
+        if ($fence -ne 'xmermaid') { $words += @($t -split '\s+' | Where-Object { $_ }).Count }
+    }
+    if ($words -gt $coreMax) {
+        Add-Issue ($start + 1) "core (Summary through Testing) is $words words, over $coreMax; cut it or split the design"
+    }
 }
 
 $issues | ForEach-Object { $_ }
