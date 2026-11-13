@@ -53,9 +53,8 @@ a short name ("Option B: SF move") and refer to it by both ("SF move (Option B)"
   existing behavior or spells out what an implementer would do anyway. Cut it, or split the design.
 - Write for a teammate who knows the system. Before keeping a sentence, ask whether it is obvious from how the system
   already works and whether an implementer would find it anyway in existing docs. If both, cut it. If an obvious
-  consequence is worth stressing, fold it into its sentence ("stores `expires_at` in the set value operation, so it is
-  replicated and persisted") instead of adding sentences about it. Leave out what the reader can derive, such as a
-  name that follows a stated pattern or what a caller can do about an error.
+  consequence is worth stressing, fold it into its sentence instead of adding sentences about it. Leave out what the
+  reader can derive, such as a name that follows a stated pattern or what a caller can do about an error.
 - Spend words where an implementer could go wrong: concurrency, ordering, failure and recovery, formats and
   compatibility, limits. Routine plumbing (argument checks, logging) gets a line at most; failure behavior is design,
   not plumbing. List metric and config names as bullets.
