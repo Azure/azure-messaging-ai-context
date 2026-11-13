@@ -23,6 +23,7 @@ For each active comment in the PR:
    - **Azure DevOps PRs**: Use `ado-repo_update_pull_request_thread` with status "Pending"
 2. **Read the comment** - Understand what change is being requested
 3. **Address the comment** - Make the necessary code/documentation changes
+   - If the comment is on a design doc, follow the "Review comments" section of the [write-design-doc](../write-design-doc/SKILL.md) skill, and keep its attribution line at the end of the PR description
    - If anything is unclear, ambiguous, or you get stuck, reply to that specific comment asking for clarification from the reviewer before proceeding
    - **Do NOT leave PR-narration comments in the code** - see [Code Comment Policy](#code-comment-policy) below
 4. **Build and run unit tests** - Verify the change doesn't break anything
