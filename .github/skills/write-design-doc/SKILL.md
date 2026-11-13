@@ -18,7 +18,7 @@ Follow [design_doc_guidelines.md](design_doc_guidelines.md).
    with one line each before writing prose.
 4. **Ask about optional sections.** Unless the doc is an RFC, list the non-obvious test scenarios and the rejected
    alternatives, one line each, and ask the user whether the doc should include Testing and Alternatives considered.
-   If you can't ask, include them.
+   If you can't ask, include them with only the non-obvious items, and leave the final cut to the reviewer.
 5. **Draft.**
 6. **Self-review.** Read the draft top to bottom as a teammate who hasn't seen it, run the review checklist, and fix
    every finding.
