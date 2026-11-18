@@ -50,9 +50,9 @@ any other top-level bullet in this file as a rule of its own.
   11. **[References]:** links to related designs and to authoritative sources for well-known algorithms the design
       uses.
 
-  Why: readers find the problem, the decision and the hard parts by these sections. Without the status line, readers
-  take a proposal for how the system works today. Sections outside the outline usually hold content that goes stale (see
-  DD-CONTENT).
+  Why: the outline keeps the doc short enough to read in one sitting. Readers find the problem, the decision and the
+  hard parts where they expect them, and a section the design doesn't need is only more to read. Without the status
+  line, readers take a proposal for how the system works today.
 
 ---
 # DD-ORDER
