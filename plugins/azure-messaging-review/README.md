@@ -11,11 +11,15 @@ and posts findings as pull request threads.
 plugins/azure-messaging-review/
 ├── plugin.json             # Plugin manifest
 ├── agency.json             # Agency metadata (pluginId, engines)
-└── skills/
-    └── ctest-guidelines/   # One skill per rule family
-        ├── SKILL.md        # Context for reviewers
+└── skills/                       # One skill per rule family
+    ├── ctest-guidelines/
+    │   ├── SKILL.md              # Context for reviewers
+    │   └── reference/
+    │       └── parameterized-tests.guidelines.md
+    └── design-doc-guidelines/
+        ├── SKILL.md
         └── reference/
-            └── parameterized-tests.guidelines.md
+            └── design_doc_guidelines.md
 ```
 
 Each skill is one family of rules. Its `SKILL.md` gives reviewers background,
@@ -26,9 +30,15 @@ to, then one section per rule with a stable ID.
 
 ## Rules
 
-| Skill              | Rules                                  | Applies to                             |
-|--------------------|----------------------------------------|----------------------------------------|
-| `ctest-guidelines` | `CTEST-PARAM-001` to `CTEST-PARAM-003` | `**/tests/**/*.c`, `**/tests/**/*.cpp` |
+| Skill                   | Rules                                  | Applies to                                                  |
+|-------------------------|----------------------------------------|-------------------------------------------------------------|
+| `ctest-guidelines`      | `CTEST-PARAM-001` to `CTEST-PARAM-003` | `**/tests/**/*.c`, `**/tests/**/*.cpp`                      |
+| `design-doc-guidelines` | `DD-TYPE` to `DD-FORMAT`               | `**/doc/design/**/*.md`, `**/*design*.md`, `**/*Design*.md` |
+
+The design doc rules are also the guidelines that the
+[write-design-doc](../../.github/skills/write-design-doc/SKILL.md) and
+[review-design-doc](../../.github/skills/review-design-doc/SKILL.md) skills
+follow, so a change to a rule changes those skills too.
 
 ## Adding a rule
 
@@ -72,6 +82,9 @@ default = ["local:./deps/azure-messaging-ai-context/plugins/azure-messaging-revi
 
 [[review.default.guidelines]]
 source = "azure-messaging-review:ctest-guidelines"
+
+[[review.default.guidelines]]
+source = "azure-messaging-review:design-doc-guidelines"
 ```
 
 The `local:` entry is for local `/agency-review` runs from a checkout that has

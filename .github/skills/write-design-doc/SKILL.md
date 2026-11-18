@@ -5,7 +5,7 @@ description: Write or revise a design doc (RFC, new component, or change to an e
 
 # Write a design doc
 
-Follow [design_doc_guidelines.md](design_doc_guidelines.md).
+Follow [design_doc_guidelines.md](../../../plugins/azure-messaging-review/skills/design-doc-guidelines/reference/design_doc_guidelines.md).
 
 ## Write a doc
 
