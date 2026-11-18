@@ -37,6 +37,9 @@ Agency Review reads any other top-level bullet in this file as a rule of its own
 
   A doc that needs two types, or makes two independent decisions, should be two docs.
 
+  Why: a doc that mixes types or decisions can't be approved or rejected as a whole, and readers can't tell which parts
+  are settled.
+
 ---
 # DD-OUTLINE
 - Title: Use the standard outline
@@ -68,6 +71,10 @@ Agency Review reads any other top-level bullet in this file as a rule of its own
   11. **[References]:** links to related designs and to authoritative sources for well-known algorithms the design
       uses.
 
+  Why: readers find the problem, the decision and the hard parts by these sections. Without the status line, readers
+  take a proposal for how the system works today. Sections outside the outline usually hold content that goes stale (see
+  DD-CONTENT).
+
 ---
 # DD-ORDER
 - Title: Make the doc read top to bottom
@@ -80,6 +87,9 @@ Agency Review reads any other top-level bullet in this file as a rule of its own
   describes them. Describe a piece that every option shares before the options, not as one of them. Give each
   option a letter and a short name ("Option B: SF move") and refer to it by both ("SF move (Option B)"), never by the
   letter alone.
+
+  Why: a term or option used before it is introduced makes the reader guess or skip ahead, and a bare option letter
+  makes them look back to decode it.
 
 ---
 # DD-DESIGN
@@ -94,6 +104,9 @@ Agency Review reads any other top-level bullet in this file as a rule of its own
     design touches them.
   - Every claim about existing code or other systems matches the code. Name the module, not file:line.
 
+  Why: an implementer builds what the doc says, so an undecided behavior, a contradiction or a wrong claim about the
+  code becomes a bug or a guess.
+
 ---
 # DD-DEPTH
 - Title: Spend words only where an implementer could go wrong
@@ -101,9 +114,8 @@ Agency Review reads any other top-level bullet in this file as a rule of its own
 - Risk: Medium
 - State: Enabled
 
-  - Keep the core, Summary through Testing, under 2,500 words; the write-design-doc lint checks it. A longer core
-    usually restates existing behavior or spells out what an implementer would do anyway. Cut it, or split the
-    design.
+  - Keep the core, Summary through Testing, under 2,500 words. A longer core usually restates existing behavior or
+    spells out what an implementer would do anyway. Cut it, or split the design.
   - Write for a teammate who knows the system. Before keeping a sentence, ask whether it is obvious from how the
     system already works and whether an implementer would find it anyway in existing docs. If both, cut it. If an
     obvious consequence is worth stressing, fold it into its sentence instead of adding sentences about it. Leave
@@ -127,6 +139,9 @@ Agency Review reads any other top-level bullet in this file as a rule of its own
     under References.
   - Give every number a source and a unit. Add no optimization without evidence that it is needed.
 
+  Why: restated existing behavior drifts from the code and buries the decisions, and missing detail where an implementer
+  could go wrong leaves them guessing.
+
 ---
 # DD-CONTENT
 - Title: Keep plans, tasks and history out of the doc
@@ -143,6 +158,9 @@ Agency Review reads any other top-level bullet in this file as a rule of its own
   - History: earlier versions, review discussion, "originally", "corrected", comparisons with other drafts.
   - Reasoning in progress ("Actually, let me reconsider"), notes to self, TBD sections.
   - Tutorials on external technology.
+
+  Why: plans, test lists, IDs and history go stale as soon as the work moves on, and the doc then disagrees with the
+  code and the work items.
 
 ---
 # DD-WORDS
@@ -161,6 +179,10 @@ Agency Review reads any other top-level bullet in this file as a rule of its own
   - No filler or sales words ("it is important to note", "key insight", "robust", "seamless", "leverage",
     "comprehensive") and no stacked hedges ("may potentially").
   - Write never, always, guarantees or exactly only when the design enforces it, and say how.
+
+  Why: filler and sales words cost reading time and hide the claim. An absolute the design doesn't enforce becomes a
+  guarantee implementers rely on. A new name for something the code already names makes readers map names, and a fact
+  stated twice drifts when one copy changes.
 
 ---
 # DD-FORMAT
@@ -185,6 +207,10 @@ Agency Review reads any other top-level bullet in this file as a rule of its own
     diagram's steps as a list.
   - Use a table only for a byte layout or to compare several items on the same attributes, when every cell is a few
     words. Align its columns in plain text. If a cell needs a sentence, use a list.
+
+  Why: reviewers read the doc in plain-text diffs and terminals. Non-ASCII characters show as "?" or garbled text in
+  many of those tools and break search, ASCII art and long lines break when rewrapped, and a table cell that holds a
+  sentence is unreadable in plain text.
 
 ## Rating review findings
 
