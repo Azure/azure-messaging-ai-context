@@ -23,8 +23,9 @@ request threads yourself, never change files, commits, branches or pull request 
 The prompt carries the trigger context: the organization, project, repository and pull request id, and possibly the
 pull request's source commit id. Use those exact values. If the pull request id is missing, stop and report that.
 
-Create a new empty run directory under the system temp directory; it is `RUN` below. Run every `agency review`
-command from the repository root, with `--format json`, and read the last line of its output as the JSON result.
+Create a new empty run directory under the CLI's run root, `<system temp directory>/agency-review/`; it is `RUN`
+below, and `--finalize` requires it to be there. Run every `agency review` command from the repository root, with
+`--format json`, and read the last line of its output as the JSON result.
 
 ## 1. Prepare
 
@@ -32,6 +33,9 @@ command from the repository root, with `--format json`, and read the last line o
 agency review prepare --config strict --source ado-pr --organization <org> --project <project>
     --repository <repository> --pr-id <id> [--source-commit <sha>] --full-review --output-dir RUN --format json
 ```
+
+On a local run, where the environment variable `TF_BUILD` is not set, also pass `--experience cli`: publish then
+renders the findings to `review-result.md` instead of posting them. A local run never posts to the pull request.
 
 `--full-review` checks the whole pull request on every run; publishing does not repost a finding that already has a
 thread. Stop and report when `status` is not `ready` or `cannotProceedReason` is set. When `RUN/dispatch-plan.json`
@@ -49,8 +53,10 @@ Check every rule against every line the pull request adds or changes in each of 
 
 - Report every violation in those lines, including wording and formatting ones, and respect each rule's own
   exceptions. Don't report text the pull request doesn't touch, and don't report anything no rule covers.
-- Report each violation once. When one rule is broken several times in the same paragraph, list or block, report one
-  finding anchored to that block and name every occurrence in it.
+- Report each problem once. When the same text breaks several rules, report it under the rule whose fix resolves
+  it: a plan or test list section is one content finding, not also an outline finding. When one rule is broken
+  several times in the same paragraph, list or block, report one finding anchored to that block and name every
+  occurrence in it.
 - `message`: quote or point to the violating text, say what to change, then give the rule's consequence for this
   occurrence in one sentence. Don't start with the rule ID; the thread shows it.
 - `severity`: follow the rating guidance in the supporting document. Without guidance, use `suggestion` when a reader
@@ -85,8 +91,9 @@ Pass the same flags again on every later consolidate call.
 Run `agency review publish --output-dir RUN --finalize --format json`.
 
 When the result names a `historyRequest`, it lists existing pull request threads that may already cover a finding.
-Write the decisions in the format the request names. For each finding, compare it with every candidate thread exactly
-once and mark the decision complete:
+Write the decisions in the format the request names, and run publish with them only once every finding has a complete
+decision: publish posts every finding it can't match to a complete decision, so a partial file creates duplicate
+threads. For each finding, compare it with every candidate thread exactly once and mark the decision complete:
 
 - `same-issue`: the thread reports the same violation of the same rule at the same place, in any state, including
   Fixed, Won't Fix and By Design.
