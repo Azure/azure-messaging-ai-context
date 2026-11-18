@@ -103,6 +103,10 @@ configuration:
         authorTypes:
         - user
     job:
+      # A full review every time: Agency Review otherwise reviews only the
+      # changes after the newest iteration in any Agency-signed thread, and the
+      # strict rules review's threads carry the same signature.
+      prompt: "Run a full re-review of this pull request: review every change in the pull request, not only the changes since the last review."
       agent:
         name: "agency-code-review"
         pluginName: "agency-review"
