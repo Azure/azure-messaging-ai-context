@@ -23,6 +23,44 @@ follow both files, and Agency Review applies them to pull requests that change a
 Each rule starts with a line of three dashes and its ID. Keep every rule in that form: Agency Review reads any other
 top-level bullet in this file as a rule of its own.
 
+## Rating review findings
+
+Keep a finding only if it costs the reader: confusion, wasted reading, or guessing at behavior. Skip changes that
+don't help the reader: renaming headings to the outline's names, moving links, expanding acronyms the team uses, or
+reordering a diagram that is already clear. Give each finding the rule it breaks and a concrete fix: a rewrite,
+"delete", "move", or the design change. Rate it:
+
+1. **Blocking:** a design bug or gap, a claim that contradicts the code, a reader who can't tell the problem or the
+   decision or has to guess at behavior, or content that doesn't belong (test lists, plans, file lists).
+2. **Question:** a design risk or alternative worth discussing that is not a bug.
+3. **Cut:** text that can be deleted or shortened without losing information.
+4. **Nit:** everything else, such as one unclear sentence. For an existing doc, missing outline pieces (Summary,
+   status line) are nits.
+
+## Revising after review
+
+1. Edit in place: rewrite the text a comment is about instead of adding a paragraph or section. A question about a
+   sentence usually means the sentence is unclear.
+2. A wording or clarity comment should not grow the doc. A comment that changes or adds design gets the depth a first
+   draft would (see DD-DEPTH), and only that.
+3. Fix what each comment asks for everywhere it applies, including every section a design change affects, and nothing
+   else. Don't restructure or reformat text that no comment is about, even where it breaks these rules; a rewrite is
+   a separate change.
+4. Check a reviewer's claim before agreeing with it.
+5. Reread the whole doc and remove text your edits made stale, duplicated or contradictory.
+6. Reply in 3 sentences or fewer with what changed. Explanations a future reader needs go in the doc.
+
+## Review checklist
+
+1. Run the write-design-doc skill's `lint_design_doc.ps1` on the doc (`-Existing` for an existing doc being edited).
+   It checks the mechanical rules: ASCII, headings, line length and wrapping, tables, status lines, outline, core
+   length.
+2. List every other violation of the rules below and of the conventions.
+3. Do any two statements contradict each other?
+4. After the Summary, can a teammate state the problem and the decision?
+5. Which sentences could be deleted or shortened without losing information?
+6. Can the core be read in one sitting? Cut or move to the appendix any section longer than its importance.
+
 ---
 # DD-TYPE
 - Title: Pick one doc type, and write one doc per decision
@@ -95,41 +133,3 @@ top-level bullet in this file as a rule of its own.
 
   Why: restated existing behavior drifts from the code and buries the decisions, and missing detail where an implementer
   could go wrong leaves them guessing.
-
-## Rating review findings
-
-Keep a finding only if it costs the reader: confusion, wasted reading, or guessing at behavior. Skip changes that
-don't help the reader: renaming headings to the outline's names, moving links, expanding acronyms the team uses, or
-reordering a diagram that is already clear. Give each finding the rule it breaks and a concrete fix: a rewrite,
-"delete", "move", or the design change. Rate it:
-
-1. **Blocking:** a design bug or gap, a claim that contradicts the code, a reader who can't tell the problem or the
-   decision or has to guess at behavior, or content that doesn't belong (test lists, plans, file lists).
-2. **Question:** a design risk or alternative worth discussing that is not a bug.
-3. **Cut:** text that can be deleted or shortened without losing information.
-4. **Nit:** everything else, such as one unclear sentence. For an existing doc, missing outline pieces (Summary,
-   status line) are nits.
-
-## Revising after review
-
-1. Edit in place: rewrite the text a comment is about instead of adding a paragraph or section. A question about a
-   sentence usually means the sentence is unclear.
-2. A wording or clarity comment should not grow the doc. A comment that changes or adds design gets the depth a first
-   draft would (see DD-DEPTH), and only that.
-3. Fix what each comment asks for everywhere it applies, including every section a design change affects, and nothing
-   else. Don't restructure or reformat text that no comment is about, even where it breaks these rules; a rewrite is
-   a separate change.
-4. Check a reviewer's claim before agreeing with it.
-5. Reread the whole doc and remove text your edits made stale, duplicated or contradictory.
-6. Reply in 3 sentences or fewer with what changed. Explanations a future reader needs go in the doc.
-
-## Review checklist
-
-1. Run the write-design-doc skill's `lint_design_doc.ps1` on the doc (`-Existing` for an existing doc being edited).
-   It checks the mechanical rules: ASCII, headings, line length and wrapping, tables, status lines, outline, core
-   length.
-2. List every other violation of the rules above and of the conventions.
-3. Do any two statements contradict each other?
-4. After the Summary, can a teammate state the problem and the decision?
-5. Which sentences could be deleted or shortened without losing information?
-6. Can the core be read in one sitting? Cut or move to the appendix any section longer than its importance.
