@@ -1,0 +1,102 @@
+---
+name: strict-rules-review
+description: >
+  Reviews an Azure DevOps pull request against the repository's strict review
+  rules (the [review.strict] config in agency.toml) and posts every violation
+  as a pull request thread. Uses the Agency Review pipeline (agency review
+  prepare, validate, consolidate, publish) without its critic, so convention
+  and style rules that Agency Review filters out are always reported.
+---
+
+# Strict rules review
+
+You review one pull request against the guideline documents of the `strict` review config in the repository's
+`agency.toml`, and publish every violation. You are the only judge: no critic runs after you, so report every
+violation you can point to in the lines the pull request adds or changes, and nothing else.
+
+The `agency review` CLI does everything except judging the rules: it reads the pull request, plans the work,
+validates your findings, and posts, de-duplicates and mutes the threads. Never post, edit, reply to or resolve pull
+request threads yourself, never change files, commits, branches or pull request metadata, and never vote.
+
+## Inputs
+
+The prompt carries the trigger context: the organization, project, repository and pull request id, and possibly the
+pull request's source commit id. Use those exact values. If the pull request id is missing, stop and report that.
+
+Create a new empty run directory under the system temp directory; it is `RUN` below. Run every `agency review`
+command from the repository root, with `--format json`, and read the last line of its output as the JSON result.
+
+## 1. Prepare
+
+```text
+agency review prepare --config strict --source ado-pr --organization <org> --project <project>
+    --repository <repository> --pr-id <id> [--source-commit <sha>] --full-review --output-dir RUN --format json
+```
+
+`--full-review` checks the whole pull request on every run; publishing does not repost a finding that already has a
+thread. Stop and report when `status` is not `ready` or `cannotProceedReason` is set. When `RUN/dispatch-plan.json`
+has no assignments, report that nothing needed review and stop.
+
+## 2. Review each assignment
+
+For each assignment in `RUN/dispatch-plan.json`, read `RUN/dispatch/<assignmentId>.json` (the assignment and the
+diffs of its files), the guideline documents in `RUN/<guidelineSource>`, and `RUN/reviewer-output.schema.json`.
+A document with `supporting: true` (a `SKILL.md`) is context for reading and rating the rules; every other document
+holds rules with IDs. `RUN/review-metadata-pr-<id>.json` holds the pull request's title and description, for rules
+that refer to them.
+
+Check every rule against every line the pull request adds or changes in each of the document's `eligibleFiles`:
+
+- Report every violation in those lines, including wording and formatting ones, and respect each rule's own
+  exceptions. Don't report text the pull request doesn't touch, and don't report anything no rule covers.
+- Report each violation once. When one rule is broken several times in the same paragraph, list or block, report one
+  finding anchored to that block and name every occurrence in it.
+- `message`: quote or point to the violating text, say what to change, then give the rule's consequence for this
+  occurrence in one sentence. Don't start with the rule ID; the thread shows it.
+- `severity`: follow the rating guidance in the supporting document. Without guidance, use `suggestion` when a reader
+  or maintainer loses information or would misread the text, and `info` otherwise. Use `blocking` only where a rule
+  says so. Severity does not decide whether a finding is posted.
+- `suggestion`: the complete replacement for exactly the anchored lines when the fix is mechanical, otherwise `null`.
+- `guidelineFile`: the `id` of the guideline document in the assignment's `guidelineDocuments`; `guidelineId`: the
+  rule ID.
+- `evaluated`: one group per rule document with every rule ID and file you checked, `relevant: true`, and a short
+  reason.
+
+Write `{ "assignmentId", "findings", "evaluated" }` as JSON to `RUN/<outputFile>` of the assignment, then run
+`agency review validate --output-dir RUN --assignment <assignmentId> --format json`. If `status` is not `valid`, fix
+what `error` reports and validate again, at most three times.
+
+## 3. Consolidate
+
+Run `agency review consolidate --output-dir RUN --format json`, then act on the result until `status` is `ready`:
+
+- When it names a `dedupeRequest`, read that file and write `RUN/dedupe-decisions.json` in the format its schema
+  names: merge only findings that report the same violation of the same rule at the same place, and list no
+  conflicts. Run consolidate again with `--dedupe-decisions RUN/dedupe-decisions.json`.
+- When it names a `criticRequest`, write `RUN/critic-verdicts.jsonl` with one line per finding in that file's
+  `findings`, in the same order:
+  `{"id":"<finding id>","verdict":"Accept","reason":"Strict rules review posts every reported violation."}`
+  Run consolidate again with `--critic-output RUN/critic-verdicts.jsonl`, plus `--dedupe-decisions` if you wrote it.
+
+Pass the same flags again on every later consolidate call.
+
+## 4. Publish
+
+Run `agency review publish --output-dir RUN --finalize --format json`.
+
+When the result names a `historyRequest`, it lists existing pull request threads that may already cover a finding.
+Write the decisions in the format the request names. For each finding, compare it with every candidate thread exactly
+once and mark the decision complete:
+
+- `same-issue`: the thread reports the same violation of the same rule at the same place, in any state, including
+  Fixed, Won't Fix and By Design.
+- `covered-by-dismissal`: a Won't Fix or By Design thread rejected the same rule for the same kind of text.
+- `distinct`: anything else, including other rules and other occurrences.
+
+Then run publish again with `--history-decisions <file>` and `--finalize`.
+
+## 5. Report
+
+Report the result: how many findings were posted, suppressed or muted, any failed posts, and the warnings the CLI
+returned. On a local run, publish renders the findings to `review-result.md` instead of posting them; include that
+file's content in your report.

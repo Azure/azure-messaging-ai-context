@@ -5,9 +5,9 @@ description: Review a design doc or RFC, both its design (correctness, gaps, ris
 
 # Review a design doc
 
-Use [design_doc_guidelines.md](../../../plugins/azure-messaging-review/skills/design-doc-guidelines/reference/design_doc_guidelines.md),
-the same rules Agency Review applies to pull requests that change a design doc. Do both passes unless the user asks
-for one.
+Use [design_doc_guidelines.md](../../../plugins/azure-messaging-review/skills/design-doc-guidelines/reference/design_doc_guidelines.md)
+and [design_doc_conventions.md](../../../plugins/azure-messaging-review/skills/design-doc-conventions/reference/design_doc_conventions.md),
+the same rules the pull request reviews apply to a change to a design doc. Do both passes unless the user asks for one.
 
 1. Read the doc once, top to bottom, as a teammate who knows the system but not this change. Note where you got lost,
    had to reread, or skimmed.
