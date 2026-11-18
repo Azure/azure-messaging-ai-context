@@ -1,0 +1,19 @@
+{
+  "$schema": "https://raw.githubusercontent.com/agency-microsoft/.github-private/main/agency.schema.json",
+  "pluginId": "fcefdebe-523e-4193-8d7f-d3f242e2319b",
+  "authors": [
+    {
+      "name": "Matt Durak",
+      "email": "mdurak@microsoft.com"
+    }
+  ],
+  "engines": [
+    "copilot"
+  ],
+  "category": "code-review",
+  "platforms": [
+    "linux",
+    "macos",
+    "windows"
+  ]
+}

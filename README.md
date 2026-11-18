@@ -26,6 +26,8 @@ This repository decouples AI context (Copilot instructions, coding conventions, 
     ├── run-coverage/
     ├── watch-multiple-pr-status/
     └── write-design-doc/
+plugins/
+└── azure-messaging-review/          # Agency Review rules (see its README)
 ```
 
 ## Usage
@@ -40,3 +42,7 @@ Then reference the files in `.github/copilot-instructions.md`:
 #file:../deps/azure-messaging-ai-context/.github/copilot-instructions.md
 #file:../deps/azure-messaging-ai-context/.github/general_coding_instructions.md
 ```
+
+## Agency Review rules
+
+[`plugins/azure-messaging-review`](plugins/azure-messaging-review/README.md) holds the review rules Agency Review applies to pull requests in the repositories that opt in.
