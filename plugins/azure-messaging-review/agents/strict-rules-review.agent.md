@@ -90,20 +90,14 @@ Pass the same flags again on every later consolidate call.
 
 Run `agency review publish --output-dir RUN --finalize --format json`.
 
-When the result names a `historyRequest`, it lists existing pull request threads that may already cover a finding.
-Write the decisions in the format the request names, and run publish with them only once every finding has a complete
-decision: publish posts every finding it can't match to a complete decision, so a partial file creates duplicate
-threads. For each finding, compare it with every candidate thread exactly once and mark the decision complete:
-
-- `same-issue`: the thread reports the same violation of the same rule at the same place, in any state, including
-  Fixed, Won't Fix and By Design.
-- `covered-by-dismissal`: a Won't Fix or By Design thread rejected the same rule for the same kind of text.
-- `distinct`: anything else, including other rules and other occurrences.
-
-Then run publish again with `--history-decisions <file>` and `--finalize`.
+When the result names a `historyRequest`, existing pull request threads may already report some findings. Load the
+review-history-decisions skill and build the decisions with its `history_decisions.py`, as the skill describes; never
+write the decisions file by hand. Then run publish again with `--history-decisions RUN/history-decisions.json` and
+`--finalize`. Publish rejects a decisions file it can't validate and then posts every finding, so if
+`history_decisions.py write` fails, fix the matches and run it again before publishing.
 
 ## 5. Report
 
-Report the result: how many findings were posted, suppressed or muted, any failed posts, and the warnings the CLI
-returned. On a local run, publish renders the findings to `review-result.md` instead of posting them; include that
-file's content in your report.
+Report the result: how many findings were posted, suppressed or muted, any failed posts, the history status, and the
+warnings the CLI returned. On a local run, publish renders the findings to `review-result.md` instead of posting them;
+include that file's content in your report.

@@ -31,10 +31,13 @@ plugins/azure-messaging-review/
     │   ├── SKILL.md
     │   └── reference/
     │       └── design_doc_conventions.md
-    └── design-doc-guidelines/
+    ├── design-doc-guidelines/
+    │   ├── SKILL.md
+    │   └── reference/
+    │       └── design_doc_guidelines.md
+    └── review-history-decisions/  # Used by strict-rules-review, not a rule family
         ├── SKILL.md
-        └── reference/
-            └── design_doc_guidelines.md
+        └── history_decisions.py
 ```
 
 Each skill is one family of rules. Its `SKILL.md` gives reviewers background,
