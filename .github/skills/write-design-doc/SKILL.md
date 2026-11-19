@@ -5,7 +5,8 @@ description: Write or revise a design doc (RFC, new component, or change to an e
 
 # Write a design doc
 
-Follow [design_doc_guidelines.md](design_doc_guidelines.md).
+Follow [design_doc_guidelines.md](../../../plugins/azure-messaging-review/skills/design-doc-guidelines/reference/design_doc_guidelines.md)
+and [design_doc_conventions.md](../../../plugins/azure-messaging-review/skills/design-doc-conventions/reference/design_doc_conventions.md).
 
 ## Write a doc
 
@@ -41,6 +42,7 @@ the user to add.
 Design doc written with write-design-doc (azure-messaging-ai-context@<commit>) by <model>.
 ```
 
-- `<commit>`: `git log -1 --format=%h -- .` run in this skill's folder, or `unversioned` if that prints nothing.
+- `<commit>`: `git log -1 --format=%h -- . '../../../plugins/azure-messaging-review/skills/design-doc-*'` run in this
+  skill's folder, or `unversioned` if that prints nothing.
 - `<model>`: the model name your instructions give. Add the reasoning effort or context window only if your instructions
   state it; never guess.

@@ -1,0 +1,15 @@
+{
+  "name": "azure-messaging-review",
+  "version": "0.1.0",
+  "description": "Pull request review rules for the Azure Messaging C repositories: guideline skills for Agency Review, and the strict-rules-review agent that posts every violation of the convention rules.",
+  "author": {
+    "name": "Matt Durak",
+    "email": "mdurak@microsoft.com"
+  },
+  "repository": "https://github.com/Azure/azure-messaging-ai-context",
+  "keywords": [
+    "agency-review",
+    "code-review",
+    "guidelines"
+  ]
+}
