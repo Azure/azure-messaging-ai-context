@@ -35,9 +35,9 @@ agency review prepare --config strict --source ado-pr --organization <org> --pro
     --output-dir RUN --format json
 ```
 
-`<experience>` is `pr` in a pipeline, where the environment variable `TF_BUILD` is set, and `cli` otherwise. With
-`cli`, publish renders the findings to `review-result.md` instead of posting them, so a local run never posts to the
-pull request.
+`<experience>` is `pr` in a pipeline, where the environment variable `TF_BUILD` is set (`pr-draft` when the trigger
+context marks the pull request as a draft), and `cli` otherwise. With `cli`, publish renders the findings to
+`review-result.md` instead of posting them, so a local run never posts to the pull request.
 
 `--full-review` checks the whole pull request on every run; publishing does not repost a finding that already has a
 thread. Stop and report when `status` is not `ready` or `cannotProceedReason` is set. When `RUN/dispatch-plan.json`
@@ -46,10 +46,12 @@ has no assignments, report that nothing needed review and stop.
 ## 2. Check the CLI
 
 The rest of this review reads and writes the artifacts of `prepare`, `validate`, `consolidate` and `publish` in
-schema version 2. Run `agency review capabilities --format json`. If any of those commands is not `available` or has
-another `artifactSchemaVersion`, the CLI has changed and this agent needs updating: run
+schema version 2. Run `agency review capabilities --format json`, and continue only when `capabilityVersion` is 2,
+those four commands are each `available` with `artifactSchemaVersion` 2, `consolidate` lists the
+`criticSuggestionSafety` feature (it drops replacement suggestions that no critic verified), and `publish` lists
+`finalize` and `terminalSummary`. Otherwise the CLI has changed and this agent needs updating: run
 `agency review publish --failed --output-dir RUN --finalize --format json`, which tells the pull request that the
-review could not proceed, then report each command's version and stop.
+review could not proceed, then report what differed and stop.
 
 ## 3. Review each assignment
 
