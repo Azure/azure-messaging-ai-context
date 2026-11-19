@@ -6,7 +6,8 @@ threads may already report a new finding. The decisions must compare every
 candidate finding with every candidate thread of its group exactly once, or
 publish rejects all of them and posts every finding again. This script writes
 that structure, so the reviewer only decides which threads report the same
-problem.
+problem. It supports history request schema 2.0 only and fails on any other
+version, since its decisions would then be rejected.
 
   history_decisions.py candidates <history-request.json>
       Prints each group's findings and threads as compact JSON for review.
@@ -27,11 +28,23 @@ MARKUP = re.compile(r"<!--.*?-->|<[^>]+>", re.S)
 BADGE = re.compile(r"^Iteration #\d+\s*")
 FOOTER = re.compile(r"\s*(---\s*)?\*\*Was this finding helpful\?\*\*.*$", re.S)
 DISMISSED = ("wontFix", "byDesign")
+SCHEMA_VERSION = "2.0"
 
 
 def load(path):
     with open(path, encoding="utf-8-sig") as stream:
         return json.load(stream)
+
+
+def load_request(path):
+    request = load(path)
+    version = request.get("schemaVersion")
+    if version != SCHEMA_VERSION:
+        raise ValueError(
+            f"history request schema {version!r} is not supported (expected {SCHEMA_VERSION!r}); "
+            "update history_decisions.py for this agency version"
+        )
+    return request
 
 
 def plain(content, limit=400):
@@ -125,11 +138,11 @@ def write(request, matches):
 
 def main(argv):
     if len(argv) == 3 and argv[1] == "candidates":
-        json.dump(candidates(load(argv[2])), sys.stdout, indent=1)
+        json.dump(candidates(load_request(argv[2])), sys.stdout, indent=1)
         print()
         return 0
     if len(argv) == 5 and argv[1] == "write":
-        document = write(load(argv[2]), load(argv[3]))
+        document = write(load_request(argv[2]), load(argv[3]))
         with open(argv[4], "w", encoding="utf-8") as stream:
             json.dump(document, stream, indent=1)
         same = sum(

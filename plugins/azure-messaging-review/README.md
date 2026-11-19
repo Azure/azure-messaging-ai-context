@@ -12,7 +12,9 @@ opt in, and both post findings as pull request threads:
 - **The strict rules review** (`agents/strict-rules-review.agent.md`) runs the
   convention rules. It uses the same `agency review` CLI pipeline with every
   finding accepted, so every violation is posted, including wording and
-  formatting ones that the critic would drop.
+  formatting ones that the critic would drop. It depends on that pipeline's
+  file formats, so it checks their versions first and, when they change, tells
+  the pull request that the review could not proceed.
 
 ## Layout
 

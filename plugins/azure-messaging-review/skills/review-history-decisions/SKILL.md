@@ -19,5 +19,6 @@ if any comparison is missing or malformed, and then posts every finding again, s
    `[]` when nothing matches.
 4. Run `history_decisions.py write <run>/history-request.json <run>/history-matches.json
    <run>/history-decisions.json`. It compares every other pair as distinct and fails on a finding or thread that is
-   not in the request.
+   not in the request. Both commands fail on a request schema other than 2.0, which means the CLI changed and the
+   script needs updating.
 5. Pass `--history-decisions <run>/history-decisions.json` to the next publish.

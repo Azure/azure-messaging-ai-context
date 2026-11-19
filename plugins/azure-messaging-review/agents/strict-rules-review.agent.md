@@ -31,17 +31,27 @@ below, and `--finalize` requires it to be there. Run every `agency review` comma
 
 ```text
 agency review prepare --config strict --source ado-pr --organization <org> --project <project>
-    --repository <repository> --pr-id <id> [--source-commit <sha>] --full-review --output-dir RUN --format json
+    --repository <repository> --pr-id <id> [--source-commit <sha>] --full-review --experience <experience>
+    --output-dir RUN --format json
 ```
 
-On a local run, where the environment variable `TF_BUILD` is not set, also pass `--experience cli`: publish then
-renders the findings to `review-result.md` instead of posting them. A local run never posts to the pull request.
+`<experience>` is `pr` in a pipeline, where the environment variable `TF_BUILD` is set, and `cli` otherwise. With
+`cli`, publish renders the findings to `review-result.md` instead of posting them, so a local run never posts to the
+pull request.
 
 `--full-review` checks the whole pull request on every run; publishing does not repost a finding that already has a
 thread. Stop and report when `status` is not `ready` or `cannotProceedReason` is set. When `RUN/dispatch-plan.json`
 has no assignments, report that nothing needed review and stop.
 
-## 2. Review each assignment
+## 2. Check the CLI
+
+The rest of this review reads and writes the artifacts of `prepare`, `validate`, `consolidate` and `publish` in
+schema version 2. Run `agency review capabilities --format json`. If any of those commands is not `available` or has
+another `artifactSchemaVersion`, the CLI has changed and this agent needs updating: run
+`agency review publish --failed --output-dir RUN --finalize --format json`, which tells the pull request that the
+review could not proceed, then report each command's version and stop.
+
+## 3. Review each assignment
 
 For each assignment in `RUN/dispatch-plan.json`, read `RUN/dispatch/<assignmentId>.json` (the assignment and the
 diffs of its files), the guideline documents in `RUN/<guidelineSource>`, and `RUN/reviewer-output.schema.json`.
@@ -72,7 +82,7 @@ Write `{ "assignmentId", "findings", "evaluated" }` as JSON to `RUN/<outputFile>
 `agency review validate --output-dir RUN --assignment <assignmentId> --format json`. If `status` is not `valid`, fix
 what `error` reports and validate again, at most three times.
 
-## 3. Consolidate
+## 4. Consolidate
 
 Run `agency review consolidate --output-dir RUN --format json`, then act on the result until `status` is `ready`:
 
@@ -86,17 +96,18 @@ Run `agency review consolidate --output-dir RUN --format json`, then act on the 
 
 Pass the same flags again on every later consolidate call.
 
-## 4. Publish
+## 5. Publish
 
 Run `agency review publish --output-dir RUN --finalize --format json`.
 
 When the result names a `historyRequest`, existing pull request threads may already report some findings. Load the
 review-history-decisions skill and build the decisions with its `history_decisions.py`, as the skill describes; never
 write the decisions file by hand. Then run publish again with `--history-decisions RUN/history-decisions.json` and
-`--finalize`. Publish rejects a decisions file it can't validate and then posts every finding, so if
-`history_decisions.py write` fails, fix the matches and run it again before publishing.
+`--finalize`. Publish rejects a decisions file it can't validate and then posts every finding again. So if
+`history_decisions.py` fails, fix the matches and run it again; if it rejects the request's schema version, publish
+with `--failed` as in step 2 instead.
 
-## 5. Report
+## 6. Report
 
 Report the result: how many findings were posted, suppressed or muted, any failed posts, the history status, and the
 warnings the CLI returned. On a local run, publish renders the findings to `review-result.md` instead of posting them;
