@@ -109,6 +109,11 @@ write the decisions file by hand. Then run publish again with `--history-decisio
 `history_decisions.py` fails, fix the matches and run it again; if it rejects the request's schema version, publish
 with `--failed` as in step 2 instead.
 
+If publish fails with "rerun publish to post the rest", run the same publish command once more; it posts only what
+is missing. If that fails the same way, run `agency review publish --failed --output-dir RUN --finalize --format json`
+so the pull request shows that the review didn't complete, and report the original error. If a publish fails because
+comments were sent but aren't on the pull request, don't run it again, because that could post them twice.
+
 ## 6. Report
 
 Report the result: how many findings were posted, suppressed or muted, any failed posts, the history status, and the
