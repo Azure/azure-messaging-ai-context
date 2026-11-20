@@ -1,0 +1,57 @@
+# Shared Agency Review configuration for the Azure Messaging repositories.
+#
+# A repository imports it from the Azure DevOps mirror of this repository with
+# [[remote_config]] in its agency.toml, pinned to the same commit as the
+# plugin; see README.md. Its own agency.toml overrides these values, except
+# that guidelines and reviewer additionalInstructions are added to these
+# (mergeStrategy = "merge").
+#
+# Two reviews run on each pull request:
+# - [review.default]: Agency Review (the agency-code-review agent). The general
+#   review plus the design rules, filtered by Agency Review's critic, which
+#   drops findings it judges immaterial.
+# - [review.strict]: the strict rules review (the strict-rules-review agent).
+#   The convention rules, with no critic, so every violation is posted.
+# Every finding of both is posted as an active thread, so the Comment
+# requirements branch policy blocks completion until someone fixes or resolves
+# it.
+
+[review.default]
+mergeStrategy = "merge"
+postComments = true
+muteBelowSeverity = "info"
+filePatterns = ["!deps/**"]
+
+[review.default.guidelinesReviewer]
+additionalInstructions = '''
+The guidelines in this repository are mandatory team rules, not preferences,
+and the team wants every violation reported. Each rule's text, and its "Why:"
+line where it has one, states the consequence of a violation for this
+repository: treat that consequence as the concrete impact of every occurrence
+the pull request adds or changes, and report the occurrence. Don't skip a
+violation because it looks minor; rate a minor one `info` instead. In each
+finding, name the rule, quote or point to the violating text, and state the
+consequence for this occurrence in one sentence, so the finding's impact is
+evident on its own.
+'''
+
+[[review.default.guidelines]]
+source = "azure-messaging-review:design-doc-guidelines"
+
+# The strict rules review selects this config by name. It matches no branch,
+# so Agency Review's own run always selects [review.default].
+[review.strict]
+mergeStrategy = "merge"
+branches = ["!**"]
+postComments = true
+muteBelowSeverity = "info"
+filePatterns = ["!deps/**"]
+
+[review.strict.domainReviewers.general]
+enabled = false
+
+[[review.strict.guidelines]]
+source = "azure-messaging-review:ctest-guidelines"
+
+[[review.strict.guidelines]]
+source = "azure-messaging-review:design-doc-conventions"
