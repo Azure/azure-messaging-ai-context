@@ -9,6 +9,13 @@ Use [design_doc_guidelines.md](../../../plugins/azure-messaging-review/skills/de
 and [design_doc_conventions.md](../../../plugins/azure-messaging-review/skills/design-doc-conventions/reference/design_doc_conventions.md),
 the same rules the pull request reviews apply to a change to a design doc. Do both passes unless the user asks for one.
 
+For a doc that describes how an existing part of the system works (it has a `Verified against code at` line, or
+documents how a part works today), use
+[existing_design_guidelines.md](../../../plugins/azure-messaging-review/skills/existing-design-guidelines/reference/existing_design_guidelines.md)
+and [existing_design_conventions.md](../../../plugins/azure-messaging-review/skills/existing-design-conventions/reference/existing_design_conventions.md)
+in place of DD-TYPE, DD-OUTLINE, DD-DESIGN and DD-DEPTH. Its design pass checks every claim against ED-CODE, and the
+skill to suggest is document-existing-design.
+
 1. Read the doc once, top to bottom, as a teammate who knows the system but not this change. Note where you got lost,
    had to reread, or skimmed.
 2. **Design pass.** Read the code and docs the change touches, then check the doc against DD-DESIGN.

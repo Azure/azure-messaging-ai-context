@@ -7,6 +7,8 @@ applyTo:
   - "**/*Design*.md"
   - "!**/design_doc_guidelines.md"
   - "!**/design_doc_conventions.md"
+  - "!**/existing_design_guidelines.md"
+  - "!**/existing_design_conventions.md"
 ---
 
 # Design doc guidelines
@@ -19,6 +21,10 @@ These rules decide whether the design is right. The conventions in
 [design_doc_conventions.md](../../design-doc-conventions/reference/design_doc_conventions.md) decide how the doc is
 written: its outline, reading order, content, words and formatting. The write-design-doc and review-design-doc skills
 follow both files, and Agency Review applies them to pull requests that change a design doc.
+
+These rules apply only to a doc that proposes a change. A doc that describes how an existing part of the system works,
+with a `Verified against code at` line under its title, follows
+[existing_design_guidelines.md](../../existing-design-guidelines/reference/existing_design_guidelines.md) instead.
 
 Each rule starts with a line of three dashes and its ID. Keep every rule in that form: Agency Review reads any other
 top-level bullet in this file as a rule of its own.

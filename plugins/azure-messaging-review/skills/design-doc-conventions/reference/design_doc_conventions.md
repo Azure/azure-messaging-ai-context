@@ -7,6 +7,8 @@ applyTo:
   - "**/*Design*.md"
   - "!**/design_doc_guidelines.md"
   - "!**/design_doc_conventions.md"
+  - "!**/existing_design_guidelines.md"
+  - "!**/existing_design_conventions.md"
 ---
 
 # Design doc conventions
@@ -15,6 +17,11 @@ These conventions decide how a design doc is written: its outline, reading order
 design rules in [design_doc_guidelines.md](../../design-doc-guidelines/reference/design_doc_guidelines.md) decide
 whether the design is right, and how to rate and revise after a review. The write-design-doc and review-design-doc
 skills follow both files.
+
+DD-OUTLINE applies only to a doc that proposes a change. A doc that describes how an existing part of the system works,
+with a `Verified against code at` line under its title, follows ED-SHAPE in
+[existing_design_conventions.md](../../existing-design-conventions/reference/existing_design_conventions.md) instead;
+the other conventions here apply to both kinds of doc.
 
 Each convention starts with a line of three dashes and its ID. Keep every convention in that form: Agency Review reads
 any other top-level bullet in this file as a rule of its own.
@@ -26,8 +33,8 @@ any other top-level bullet in this file as a rule of its own.
 - Risk: Low
 - State: Enabled
 
-  Use these sections in this order. Skip a bracketed section when it has nothing to say. Add no other top-level
-  sections.
+  In a doc that proposes a change, use these sections in this order. Skip a bracketed section when it has nothing to
+  say. Add no other top-level sections.
 
   1. **Title**, then `Status: proposed (last updated YYYY-MM-DD)` while the design is not implemented. Update the
      date whenever the doc changes.
@@ -82,7 +89,7 @@ any other top-level bullet in this file as a rule of its own.
   - Files, functions or modules to change; phases, PR plans, tasks, estimates.
   - Test lists, mocking plans, requirement IDs, approval checkboxes.
   - Work item, PR and ICM numbers (except as evidence for the problem), file:line references, dates other than the
-    status line.
+    status or verified line.
   - History: earlier versions, review discussion, "originally", "corrected", comparisons with other drafts.
   - Reasoning in progress ("Actually, let me reconsider"), notes to self, TBD sections.
   - Tutorials on external technology.

@@ -1,6 +1,6 @@
 ---
 name: write-design-doc
-description: Write or revise a design doc (RFC, new component, or change to an existing system). Use for any change to a design doc, design, RFC or proposal, from a first draft to small edits, including addressing review comments on one.
+description: Write or revise a design doc that proposes a change (RFC, new component, or change to an existing system). Use for any change to such a doc, design, RFC or proposal, from a first draft to small edits, including addressing review comments on one. To document how existing code works today, use document-existing-design.
 ---
 
 # Write a design doc

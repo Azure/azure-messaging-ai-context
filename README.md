@@ -22,6 +22,7 @@ This repository decouples AI context (Copilot instructions, coding conventions, 
     ├── apply-change-to-repo-hierarchy/
     ├── create-new-task/
     ├── diagnose-blocked-pr/
+    ├── document-existing-design/
     ├── extract-learnings/
     ├── review-design-doc/
     ├── run-coverage/

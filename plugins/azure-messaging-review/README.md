@@ -38,6 +38,14 @@ plugins/azure-messaging-review/
     │   ├── SKILL.md
     │   └── reference/
     │       └── design_doc_guidelines.md
+    ├── existing-design-conventions/
+    │   ├── SKILL.md
+    │   └── reference/
+    │       └── existing_design_conventions.md
+    ├── existing-design-guidelines/
+    │   ├── SKILL.md
+    │   └── reference/
+    │       └── existing_design_guidelines.md
     └── review-history-decisions/  # Used by strict-rules-review, not a rule family
         ├── SKILL.md
         └── history_decisions.py
@@ -51,20 +59,26 @@ to, then one section per rule with a stable ID.
 
 ## Rules
 
-| Skill                    | Rules                                                           | Review        |
-|--------------------------|-----------------------------------------------------------------|---------------|
-| `ctest-guidelines`       | `CTEST-PARAM-001` to `CTEST-PARAM-003`                          | Strict rules  |
-| `design-doc-conventions` | `DD-OUTLINE`, `DD-ORDER`, `DD-CONTENT`, `DD-WORDS`, `DD-FORMAT` | Strict rules  |
-| `design-doc-guidelines`  | `DD-TYPE`, `DD-DESIGN`, `DD-DEPTH`                              | Agency Review |
+| Skill                         | Rules                                                           | Review        |
+|-------------------------------|-----------------------------------------------------------------|---------------|
+| `ctest-guidelines`            | `CTEST-PARAM-001` to `CTEST-PARAM-003`                          | Strict rules  |
+| `design-doc-conventions`      | `DD-OUTLINE`, `DD-ORDER`, `DD-CONTENT`, `DD-WORDS`, `DD-FORMAT` | Strict rules  |
+| `design-doc-guidelines`       | `DD-TYPE`, `DD-DESIGN`, `DD-DEPTH`                              | Agency Review |
+| `existing-design-conventions` | `ED-SHAPE`, `ED-LINKS`, `ED-DIAGRAMS`                           | Strict rules  |
+| `existing-design-guidelines`  | `ED-CODE`, `ED-DEPTH`                                           | Agency Review |
 
 The ctest rules apply to `**/tests/**/*.c` and `**/tests/**/*.cpp`, and the
 design doc rules to `**/doc/design/**/*.md`, `**/*design*.md` and
 `**/*Design*.md`.
 
 The design doc rules and conventions are also what the
-[write-design-doc](../../.github/skills/write-design-doc/SKILL.md) and
+[write-design-doc](../../.github/skills/write-design-doc/SKILL.md),
+[document-existing-design](../../.github/skills/document-existing-design/SKILL.md) and
 [review-design-doc](../../.github/skills/review-design-doc/SKILL.md) skills
-follow, so a change to a rule changes those skills too.
+follow, so a change to a rule changes those skills too. The existing-design rules
+apply only to docs that describe how the system works today, which have a
+`Verified against code at` line under their title; the DD-TYPE, DD-OUTLINE,
+DD-DESIGN and DD-DEPTH rules apply only to docs that propose a change.
 
 ## Adding a rule
 

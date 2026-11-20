@@ -8,7 +8,9 @@ description: Writing conventions for Azure Messaging design docs and RFCs (DD-OU
 The conventions are in `reference/design_doc_conventions.md`: DD-OUTLINE, DD-ORDER, DD-CONTENT, DD-WORDS and
 DD-FORMAT. They apply to new design docs and to the text a pull request adds or rewrites in an existing one. Don't flag
 text the pull request doesn't touch. For an existing doc, missing outline pieces (Summary, status line) are violations
-only when the pull request adds the section they belong to.
+only when the pull request adds the section they belong to. For a doc that describes how an existing part of the
+system works (it has a `Verified against code at` line under its title), skip DD-OUTLINE: the
+existing-design-conventions skill covers its shape.
 
 They are team conventions: report every violation in the changed text, including wording and formatting ones, except
 changes that don't help the reader: renaming headings to the outline's names, moving links, expanding acronyms the
