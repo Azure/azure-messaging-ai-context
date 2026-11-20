@@ -22,6 +22,7 @@ opt in, and both post findings as pull request threads:
 plugins/azure-messaging-review/
 ├── plugin.json                    # Plugin manifest
 ├── agency.json                    # Agency metadata (pluginId, engines)
+├── review.toml                    # Shared Agency Review config, imported by each repository
 ├── agents/
 │   └── strict-rules-review.agent.md
 └── skills/                        # One skill per rule family
@@ -76,9 +77,9 @@ follow, so a change to a rule changes those skills too.
   - A rule that needs judgment against the code, where a reviewer can be wrong,
     goes in a skill of Agency Review, whose critic filters out wrong findings.
 - Add a new skill for a new family of rules, then add it to the
-  `[[review.strict.guidelines]]` or `[[review.default.guidelines]]` list of the
-  repositories that should use it. Never list a skill in both, or both reviews
-  post the same findings.
+  `[[review.strict.guidelines]]` or `[[review.default.guidelines]]` list in
+  `review.toml`, or in the `agency.toml` of a repository that alone should use
+  it. Never list a skill in both, or both reviews post the same findings.
 - Give each rule a new, unique ID and never reuse a retired one.
 - End each rule with a `Why:` line that states the consequence of a violation.
   Reviewers quote it as the impact of a finding.
@@ -89,9 +90,10 @@ Azure DevOps repositories load the plugin from the Azure DevOps mirror of this
 repository,
 [msazure/One/Azure-Messaging-AI-Context](https://dev.azure.com/msazure/One/_git/Azure-Messaging-AI-Context),
 whose `upstream/master` branch follows this repository's `master`. Agency jobs
-can't load plugins from the `Azure` GitHub organization yet. Pin the plugin to a
-reviewed commit of that branch, so a pull request can't change the agent or the
-rules that review it.
+can't load plugins from the `Azure` GitHub organization yet. Pin the plugin and
+`review.toml` to the same reviewed commit of that branch, so a pull request
+can't change the agent or the rules that review it. Taking a newer version means
+changing that commit everywhere it appears.
 
 `.azuredevops/policies/agency-triggers.yml`, with the plugin spec
 `ado-git:msazure/One/Azure-Messaging-AI-Context:plugins/azure-messaging-review@<commit>`:
@@ -131,51 +133,39 @@ configuration:
         - user
     job:
       agent:
-        name: "strict-rules-review"
-        pluginName: "azure-messaging-review"
+        name: "ado-git:msazure/One/Azure-Messaging-AI-Context:plugins/azure-messaging-review/agents/strict-rules-review@<commit>"
         type: Spec
       plugins:
       - name: "<plugin spec>"
         type: Spec
 ```
 
-`agency.toml`:
+`agency.toml` imports `review.toml` and loads the plugin, both at the same
+commit, and adds what only this repository needs:
 
 ```toml
+[[remote_config]]
+git = "https://dev.azure.com/msazure/One/_git/Azure-Messaging-AI-Context"
+rev = "<commit>"
+path = "plugins/azure-messaging-review/review.toml"
+
 [plugins]
-default = ["local:./deps/azure-messaging-ai-context/plugins/azure-messaging-review"]
-
-# Agency Review
-[review.default]
-muteBelowSeverity = "info"
-
-[[review.default.guidelines]]
-source = "azure-messaging-review:design-doc-guidelines"
-
-# Strict rules review. It matches no branch, so Agency Review always selects
-# [review.default]; the strict rules agent selects it by name.
-[review.strict]
-branches = ["!**"]
-muteBelowSeverity = "info"
-
-[review.strict.domainReviewers.general]
-enabled = false
-
-[[review.strict.guidelines]]
-source = "azure-messaging-review:ctest-guidelines"
-
-[[review.strict.guidelines]]
-source = "azure-messaging-review:design-doc-conventions"
+default = ["<plugin spec>"]
 ```
+
+`review.toml` sets `mergeStrategy = "merge"`, so a repository's own
+`[[review.<name>.guidelines]]` and `guidelinesReviewer.additionalInstructions`
+are added to the shared ones; its other settings replace the shared values. Run
+`agency config list --show-source` to see where each value comes from. In a
+pull request review, a failure to fetch `review.toml` is only a warning, and the
+review runs without the shared settings.
 
 `muteBelowSeverity = "info"` posts every finding as an active thread, so the
 Comment requirements branch policy blocks completion until someone fixes or
 resolves it.
 
-The `local:` entry is for local runs from a checkout that has this repository
-as the `deps/azure-messaging-ai-context` submodule; pull request reviews load
-the plugin from the trigger's `job.plugins` entry. A local run prints its
-findings and never posts them:
+A local run in the repository uses the same plugin and configuration, and prints
+its findings without posting them:
 
 ```powershell
 agency copilot --plugin market:agency-review@agency-microsoft/.github-private --allow-all `
