@@ -128,7 +128,9 @@ any other top-level bullet in this file as a rule of its own.
 
   - Markdown (bold, italics, code spans) is fine where it helps the reader, but the doc must also read well as plain
     text. ASCII characters only: no Unicode arrows, em-dashes, curly quotes, emoji or check marks.
-  - `#` headings only (convert `===` and `---` underlines when editing a doc), at most 3 levels, unnumbered.
+  - `#` headings only (convert `===` and `---` underlines when editing a doc), nested as deep as the structure needs.
+    Number the sections and open with a table of contents only in a long doc that readers navigate rather than read
+    straight through.
   - Wrap prose and lists at 120 characters.
   - Prefer lists. Keep each top-level bullet to one line. Nest details when there are several; fold a single short
     reason into the line. Give options, alternatives and cases a short bold label:

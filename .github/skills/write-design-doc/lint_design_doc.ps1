@@ -76,8 +76,6 @@ for ($i = 0; $i -lt $lines.Count; $i++) {
     if ($l -match '^(#+)\s+(.*)$') {
         $level = $Matches[1].Length
         $title = $Matches[2].Trim()
-        if ($level -gt 3) { Add-Issue $n 'heading deeper than 3 levels' }
-        if ($title -match '^\d+[.)]') { Add-Issue $n 'numbered heading' }
         if (($title -replace '^\d+[.)]\s*', '') -match $planHeading) { Add-Issue $n "plan content heading '$title'" }
         if ($level -eq 2) { $h2 += [pscustomobject]@{ Line = $n; Title = $title.ToLower() } }
         continue
