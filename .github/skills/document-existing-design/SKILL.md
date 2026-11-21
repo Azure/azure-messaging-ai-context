@@ -16,16 +16,20 @@ and DD-ORDER, DD-CONTENT, DD-WORDS and DD-FORMAT in
    touches, which run only in some roles or modes, and which are written but not used.
 3. **Check the existing docs.** For each overlapping doc, note what is current, what the code contradicts, and what
    was never built.
-4. **Propose the tree.** List the part's pieces that deserve their own doc, as deep as you can see, marking which have
-   a doc today and which are gaps. Say what happens to each overlapping doc: rewrite it in place if it covers one
-   doc's scope; otherwise merge its current content into the docs it overlaps and delete it once nothing current is
-   left in it. Ask the user which docs to write now, one question at a time, and about any split the code doesn't
-   settle. If you can't ask, write only the requested doc.
+4. **Propose the tree and the concepts.** List the part's pieces that deserve their own doc, as deep as you can see,
+   marking which have a doc today and which are gaps. Say what happens to each overlapping doc: rewrite it in place if
+   it covers one doc's scope; otherwise merge its current content into the docs it overlaps and delete it once nothing
+   current is left in it. List the core concepts the doc will explain, marking those that need more than a sentence or
+   two. Ask the user, one question at a time, which docs to write now, which concepts to include or explain in more
+   depth, and about any split the code doesn't settle. If you can't ask, write only the requested doc.
 5. **Draft** each doc top-down, then fix the links in its parent and in the docs it links to.
-6. **Check.** Run `../write-design-doc/lint_design_doc.ps1 -ExistingDesign` on each doc you wrote and fix every
+6. **Verify.** For every claim about which module creates or owns another, which thread runs what, what happens on a
+   failure, and which callers or cases a behavior covers, reread the call sites and fix or cut the claim. These are
+   the claims a draft most often gets wrong.
+7. **Check.** Run `../write-design-doc/lint_design_doc.ps1 -ExistingDesign` on each doc you wrote and fix every
    finding. Read each doc top to bottom as a teammate who knows the system but not this part, and cut what doesn't help
    them.
-7. **Report** in 10 lines or fewer: the tree (written, existing, proposed), the files rewritten, merged or deleted,
+8. **Report** in 10 lines or fewer: the tree (written, existing, proposed), the files rewritten, merged or deleted,
    and the wrong statements you found in docs you didn't change. Then give the attribution line.
 
 ## Review comments

@@ -37,9 +37,13 @@ any other top-level bullet in this file as a rule of its own.
     1. **Summary:** what the part does for its callers, what it includes, and where it sits in the system.
     2. **Core concepts:** the terms and ideas the rest of the doc uses, one or two sentences each, ordered so each
        builds on the ones before (for a storage index: blocks and keys, then operations and their log addresses,
-       then local and offloaded entries). Define them here; explain how they work under the piece that owns them.
+       then local and offloaded entries). A concept the whole part rests on, such as how its data is laid out or
+       stored, may get its own sub-section and diagram. Define concepts here; explain how they work under the piece
+       that owns them.
     3. **Components or layers:** a diagram of the pieces, then a sub-section per piece: its responsibility, how it
-       does its share of the work, and a link to its own doc, or to its requirements when it has none.
+       does its share of the work, and a link to its own doc, or to its requirements when it has none. Group related
+       pieces under one sub-section with a nested sub-section or bullet each, and a small diagram of what passes
+       between them when that isn't obvious.
     4. **Flows:** the flows that cross pieces, each a sequence diagram plus a few sentences on what the diagram can't
        show.
     5. **[Cross-cutting topics]:** what no single piece owns, such as threading, failure and recovery, or lifecycles,
@@ -77,8 +81,9 @@ any other top-level bullet in this file as a rule of its own.
   - One diagram of the pieces: for a part built in layers, the layer stack from top to bottom; otherwise pieces as
     boxes and calls as arrows from caller to callee, with subgraphs for layers or roles (primary only, client side). At
     most about 12 boxes; group the rest into pieces with their own doc.
-  - Sequence diagrams at the doc's level: the participants are its pieces, not functions. One diagram per flow. Show
-    where work moves to another thread or completes asynchronously when it matters.
+  - Sequence diagrams at the doc's level: the participants are the pieces the doc describes, not functions, and not
+    groups of pieces it describes separately. One diagram per flow. Show where work moves to another thread or
+    completes asynchronously when it matters.
   - State diagrams for lifecycles such as roles or open and close.
   - Use the same names in diagrams, text and code.
 
