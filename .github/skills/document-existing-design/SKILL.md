@@ -20,8 +20,9 @@ and DD-ORDER, DD-CONTENT, DD-WORDS and DD-FORMAT in
    marking which have a doc today and which are gaps. Say what happens to each overlapping doc: rewrite it in place if
    it covers one doc's scope; otherwise merge its current content into the docs it overlaps and delete it once nothing
    current is left in it. List the core concepts the doc will explain, marking those that need more than a sentence or
-   two. Ask the user, one question at a time, which docs to write now, which concepts to include or explain in more
-   depth, and about any split the code doesn't settle. If you can't ask, write only the requested doc.
+   two. Before drafting, ask the user one question at a time: which docs to write now, then which concepts to include
+   or explain in more depth (always ask this one, even after the user answers the first), then about any split the
+   code doesn't settle. If you can't ask, write only the requested doc.
 5. **Draft** each doc top-down, then fix the links in its parent and in the docs it links to.
 6. **Verify.** For every claim about which module creates or owns another, which thread runs what, what happens on a
    failure, and which callers or cases a behavior covers, reread the call sites and fix or cut the claim. These are

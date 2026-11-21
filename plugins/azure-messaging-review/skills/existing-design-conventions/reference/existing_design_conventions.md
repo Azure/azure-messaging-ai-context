@@ -81,9 +81,10 @@ any other top-level bullet in this file as a rule of its own.
   - One diagram of the pieces: for a part built in layers, the layer stack from top to bottom; otherwise pieces as
     boxes and calls as arrows from caller to callee, with subgraphs for layers or roles (primary only, client side). At
     most about 12 boxes; group the rest into pieces with their own doc.
-  - Sequence diagrams at the doc's level: the participants are the pieces the doc describes, not functions, and not
-    groups of pieces it describes separately. One diagram per flow. Show where work moves to another thread or
-    completes asynchronously when it matters.
+  - Sequence diagrams at the doc's level: the participants are the pieces the doc describes, not functions. One
+    diagram per flow. Show where work moves to another thread or completes asynchronously when it matters.
+  - Draw each piece the doc describes separately as its own box or participant, in every diagram; merge pieces only
+    where the doc also describes them as one.
   - State diagrams for lifecycles such as roles or open and close.
   - Use the same names in diagrams, text and code.
 
