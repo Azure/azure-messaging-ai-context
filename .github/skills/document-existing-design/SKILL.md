@@ -24,9 +24,13 @@ and DD-ORDER, DD-CONTENT, DD-WORDS and DD-FORMAT in
    or explain in more depth (always ask this one, even after the user answers the first), then about any split the
    code doesn't settle. If you can't ask, write only the requested doc.
 5. **Draft** each doc top-down, then fix the links in its parent and in the docs it links to.
-6. **Verify.** For every claim about which module creates or owns another, which thread runs what, what happens on a
-   failure, and which callers or cases a behavior covers, reread the call sites and fix or cut the claim. These are
-   the claims a draft most often gets wrong.
+6. **Verify with a fresh reader.** Give each doc to a sub-agent that has none of your context (a different model
+   family if you can choose one). Ask it to list every claim the doc makes about the code, check each against the
+   code, and report the claims the code contradicts or doesn't support, with the evidence. Claims about which module
+   creates or owns another, which thread runs what, what happens on a failure, formats, what is built but unused, and
+   which callers or cases a behavior covers are the ones drafts most often get wrong. Check each reported claim
+   yourself, fix or cut it, and repeat until a pass reports nothing wrong, at most twice. If you can't start a
+   sub-agent, do the same check yourself as a separate pass, claim by claim.
 7. **Check.** Run `../write-design-doc/lint_design_doc.ps1 -ExistingDesign` on each doc you wrote and fix every
    finding. Read each doc top to bottom as a teammate who knows the system but not this part, and cut what doesn't help
    them.
