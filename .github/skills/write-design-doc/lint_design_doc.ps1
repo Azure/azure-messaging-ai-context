@@ -137,8 +137,17 @@ for ($i = 0; $i -lt $lines.Count; $i++) {
     }
 }
 
-# Relative links must resolve.
+# Relative links must resolve. A link that starts with / is relative to the repo root, and a link into a submodule
+# that isn't checked out can't be checked.
 $docDir = Split-Path -Parent (Resolve-Path -LiteralPath $Path)
+$repoRoot = git -C $docDir rev-parse --show-toplevel 2>$null
+$linkBase = if ($repoRoot) { $repoRoot } else { $docDir }
+$absentSubmodules = @()
+if ($repoRoot -and (Test-Path -LiteralPath (Join-Path $repoRoot '.gitmodules'))) {
+    $absentSubmodules = @(git -C $repoRoot config --file .gitmodules --get-regexp '\.path$' |
+        ForEach-Object { [IO.Path]::GetFullPath((Join-Path $repoRoot ($_ -split ' ', 2)[1])) } |
+        Where-Object { -not (Test-Path -LiteralPath (Join-Path $_ '.git')) })
+}
 $inCode = $false
 for ($i = 0; $i -lt $lines.Count; $i++) {
     if ($lines[$i].TrimStart().StartsWith('```')) { $inCode = -not $inCode; continue }
@@ -147,9 +156,12 @@ for ($i = 0; $i -lt $lines.Count; $i++) {
         $target = $m.Groups[1].Value
         if ($target -match '^(https?:|mailto:|#)') { continue }
         $file = [uri]::UnescapeDataString(($target -split '#')[0])
-        if ($file -and -not (Test-Path -LiteralPath (Join-Path $docDir $file))) {
-            Add-Issue ($i + 1) "broken link '$target'"
-        }
+        if (-not $file) { continue }
+        $full = if ($file.StartsWith('/')) { Join-Path $linkBase $file.TrimStart('/') } else { Join-Path $docDir $file }
+        $full = [IO.Path]::GetFullPath($full)
+        if (Test-Path -LiteralPath $full) { continue }
+        if ($absentSubmodules | Where-Object { $full.StartsWith($_ + [IO.Path]::DirectorySeparatorChar) }) { continue }
+        Add-Issue ($i + 1) "broken link '$target'"
     }
 }
 
