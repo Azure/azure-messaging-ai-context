@@ -173,7 +173,7 @@ if ($ExistingDesign) {
                 $seen[$id] = $true
                 if ($id -match '^[\w./-]+\.(c|h|cpp|hpp|cs|rs)$') {
                     if (-not (git -C $root ls-files -- "*$(Split-Path -Leaf $id)")) {
-                        Add-Issue ($i + 1) "file `$id` not found in the repo"
+                        Add-Issue ($i + 1) "file ``$id`` not found in the repo"
                     }
                 }
                 elseif ($id -match '^[A-Za-z_][A-Za-z0-9_]{3,}$' -and $id.Contains('_')) {
