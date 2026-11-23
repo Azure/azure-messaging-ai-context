@@ -19,9 +19,10 @@ consequence of a violation. Rate a violation `suggestion` when the reader loses 
 (a missing status line, a term used before it is defined, a plan or test list, a file:line reference), and `info`
 otherwise (filler words, non-ASCII characters, long lines).
 
-When the pull request adds a design doc or rewrites most of one, its description lacks the line "Design doc written
-with write-design-doc", and the doc breaks several conventions, add one `info` finding on the doc's first changed
-line that suggests revising the doc with the write-design-doc skill in github.com/Azure/azure-messaging-ai-context.
+When the pull request adds a design doc that proposes a change or rewrites most of one, its description lacks the line
+"Design doc written with write-design-doc", and the doc breaks several conventions, add one `info` finding on the
+doc's first changed line that suggests revising the doc with the write-design-doc skill in
+github.com/Azure/azure-messaging-ai-context.
 
 Check the mechanical conventions in DD-OUTLINE and DD-FORMAT (status line, sections, ASCII, headings, wrapping,
 tables) by reading the changed lines. Don't run `lint_design_doc.ps1`, which isn't in the repository under review.
