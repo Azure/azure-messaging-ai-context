@@ -7,8 +7,8 @@ The design doc to check.
 The doc is an existing doc being edited, so its outline, line wrapping and top status line are not checked.
 .PARAMETER ExistingDesign
 The doc describes an existing design (the document-existing-design skill): it needs a verified line instead of a status
-line and has no proposal outline and a shorter core. Every backticked name that contains an underscore, and every
-backticked C, C++, C# or Rust file name, must exist in the repo's code.
+line and has no proposal outline and a shorter core. Before Future work, every backticked name that contains an
+underscore, and every backticked C, C++, C# or Rust file name, must exist in the repo's code.
 #>
 param(
     [Parameter(Mandatory)] [string] $Path,
@@ -177,12 +177,15 @@ if ($ExistingDesign) {
             Add-Issue $_.Line "proposal section '$($_.Title)'; an existing-design doc describes what is built"
         }
 
-    # Identifiers in backticks (snake_case names, or file names) must exist in the repo's code.
+    # Identifiers in backticks (names with an underscore, or code file names) must exist in the repo's code, before
+    # Future work, which may name planned parts.
     $root = git -C $docDir rev-parse --show-toplevel 2>$null
+    $plannedFrom = $h2 | Where-Object { $_.Title -match '^(future work|references|appendix)' } | Select-Object -First 1
+    $idStop = if ($plannedFrom) { $plannedFrom.Line - 1 } else { $lines.Count }
     if ($root) {
         $seen = @{}
         $inCode = $false
-        for ($i = 0; $i -lt $lines.Count; $i++) {
+        for ($i = 0; $i -lt $idStop; $i++) {
             if ($lines[$i].TrimStart().StartsWith('```')) { $inCode = -not $inCode; continue }
             if ($inCode) { continue }
             foreach ($m in [regex]::Matches($lines[$i], '`([^`]+)`')) {

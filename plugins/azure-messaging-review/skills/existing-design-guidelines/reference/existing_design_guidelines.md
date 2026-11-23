@@ -39,9 +39,8 @@ top-level bullet in this file as a rule of its own.
   - Describe what the code does today, in the present tense. The code is the source of truth: follow it from the
     callers down, and check what older docs and headers say against the call sites.
   - A module that only tests create is not part of the design yet; list it under Future work.
-  - No history ("originally", "was replaced"), no proposal language ("will", "proposes"), and no record of the doc's
-    edits.
-  - Every identifier in backticks exists in the code.
+  - No history ("originally", "was replaced") and no record of the doc's edits. Before Future work, which describes
+    planned parts, no proposal language ("will", "proposes"), and every identifier in backticks exists in the code.
   - A shipped feature is part of the design: describe it where it belongs instead of linking a separate feature doc.
 
   Why: readers trust this doc to describe the running system. A stale name, a design that was never built, or unused
