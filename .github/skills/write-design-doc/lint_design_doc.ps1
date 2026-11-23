@@ -76,8 +76,9 @@ for ($i = 0; $i -lt $lines.Count; $i++) {
     if ($l -match '^(#+)\s+(.*)$') {
         $level = $Matches[1].Length
         $title = $Matches[2].Trim()
-        if (($title -replace '^\d+[.)]\s*', '') -match $planHeading) { Add-Issue $n "plan content heading '$title'" }
-        if ($level -eq 2) { $h2 += [pscustomobject]@{ Line = $n; Title = $title.ToLower() } }
+        $name = $title -replace '^\d+(\.\d+)*[.)]?\s+', ''
+        if ($name -match $planHeading) { Add-Issue $n "plan content heading '$title'" }
+        if ($level -eq 2) { $h2 += [pscustomobject]@{ Line = $n; Title = $name.ToLower() } }
         continue
     }
     if ($l.Length -gt 120 -and $l -notmatch '\]\(|https?://') {
