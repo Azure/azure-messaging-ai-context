@@ -7,6 +7,8 @@ description: Design rules for Azure Messaging design docs and RFCs (DD-TYPE, DD-
 
 The rules are in `reference/design_doc_guidelines.md`: DD-TYPE, DD-DESIGN and DD-DEPTH. They apply to new design docs
 and to the text a pull request adds or rewrites in an existing one. Don't flag text the pull request doesn't touch.
+Skip a doc that describes how an existing part of the system works (it has a `Verified against code at` line under its
+title); the existing-design-guidelines skill covers it.
 The writing conventions (DD-OUTLINE, DD-ORDER, DD-CONTENT, DD-WORDS, DD-FORMAT) are in the design-doc-conventions
 skill, which the strict rules review checks; don't report them here.
 

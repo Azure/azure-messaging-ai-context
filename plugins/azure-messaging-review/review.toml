@@ -38,6 +38,9 @@ evident on its own.
 [[review.default.guidelines]]
 source = "azure-messaging-review:design-doc-guidelines"
 
+[[review.default.guidelines]]
+source = "azure-messaging-review:existing-design-guidelines"
+
 # The strict rules review selects this config by name. It matches no branch,
 # so Agency Review's own run always selects [review.default].
 [review.strict]
@@ -55,3 +58,6 @@ source = "azure-messaging-review:ctest-guidelines"
 
 [[review.strict.guidelines]]
 source = "azure-messaging-review:design-doc-conventions"
+
+[[review.strict.guidelines]]
+source = "azure-messaging-review:existing-design-conventions"

@@ -5,10 +5,15 @@ Checks the mechanical rules of design_doc_guidelines.md. Prints one line per iss
 The design doc to check.
 .PARAMETER Existing
 The doc is an existing doc being edited, so its outline, line wrapping and top status line are not checked.
+.PARAMETER ExistingDesign
+The doc describes an existing design (the document-existing-design skill): it needs a verified line instead of a status
+line and has no proposal outline and a shorter core. Before Future work, every backticked name that contains an
+underscore, and every backticked C, C++, C# or Rust file name, must exist in the repo's code.
 #>
 param(
     [Parameter(Mandatory)] [string] $Path,
-    [switch] $Existing
+    [switch] $Existing,
+    [switch] $ExistingDesign
 )
 
 $outline = 'summary', 'problem', 'how it works today', 'design', 'compatibility and rollout', 'test', 'alternative',
@@ -71,10 +76,9 @@ for ($i = 0; $i -lt $lines.Count; $i++) {
     if ($l -match '^(#+)\s+(.*)$') {
         $level = $Matches[1].Length
         $title = $Matches[2].Trim()
-        if ($level -gt 3) { Add-Issue $n 'heading deeper than 3 levels' }
-        if ($title -match '^\d+[.)]') { Add-Issue $n 'numbered heading' }
-        if (($title -replace '^\d+[.)]\s*', '') -match $planHeading) { Add-Issue $n "plan content heading '$title'" }
-        if ($level -eq 2) { $h2 += [pscustomobject]@{ Line = $n; Title = $title.ToLower() } }
+        $name = $title -replace '^\d+(\.\d+)*[.)]?\s+', ''
+        if ($name -match $planHeading) { Add-Issue $n "plan content heading '$title'" }
+        if ($level -eq 2) { $h2 += [pscustomobject]@{ Line = $n; Title = $name.ToLower() } }
         continue
     }
     if ($l.Length -gt 120 -and $l -notmatch '\]\(|https?://') {
@@ -106,7 +110,8 @@ if (-not $Existing) {
         $l = $lines[$i]
         $fence = $l.TrimStart().StartsWith('```')
         if ($fence) { $inCode = -not $inCode }
-        $isText = -not $inCode -and -not $fence -and $l.Trim() -and $l -notmatch '^\s*(#|\||>|<|=+\s*$|-{3,}\s*$)'
+        $isText = -not $inCode -and -not $fence -and $l.Trim() -and $l -notmatch '^\s*(#|\||>|<|=+\s*$|-{3,}\s*$)' -and
+            $l -notmatch '^(Parent|Status):|^Verified against code at '
         if (-not $isText -or $l -match '^\s*([-*+]|\d+[.)])\s') {
             Test-Wrap $para
             $para = @()
@@ -117,7 +122,18 @@ if (-not $Existing) {
 }
 
 $statusLine = '^Status: \w[\w ]* \(last updated \d{4}-\d{2}-\d{2}\)\s*$'
-if (-not $Existing -and -not ($lines -match $statusLine)) {
+$verifiedLine = '^Verified against code at [0-9a-f]{7,40} \(\d{4}-\d{2}-\d{2}\)\s*$'
+if ($ExistingDesign) {
+    if (-not ($lines -match $verifiedLine)) {
+        Add-Issue 1 "missing 'Verified against code at <commit> (YYYY-MM-DD)' line"
+    }
+    for ($i = 0; $i -lt $lines.Count - 1; $i++) {
+        if ($lines[$i] -match '^Parent:' -and $lines[$i + 1].Trim()) {
+            Add-Issue ($i + 1) 'put a blank line after the Parent line, or Markdown joins it with the next line'
+        }
+    }
+}
+elseif (-not $Existing -and -not ($lines -match $statusLine)) {
     Add-Issue 1 "missing 'Status: <state> (last updated YYYY-MM-DD)' line"
 }
 for ($i = 0; $i -lt $lines.Count; $i++) {
@@ -127,20 +143,91 @@ for ($i = 0; $i -lt $lines.Count; $i++) {
     }
 }
 
+# Relative links must resolve. A link that starts with / is relative to the repo root, and a link into a submodule
+# that isn't checked out can't be checked.
+$docDir = Split-Path -Parent (Resolve-Path -LiteralPath $Path)
+$repoRoot = git -C $docDir rev-parse --show-toplevel 2>$null
+$linkBase = if ($repoRoot) { $repoRoot } else { $docDir }
+$absentSubmodules = @()
+if ($repoRoot -and (Test-Path -LiteralPath (Join-Path $repoRoot '.gitmodules'))) {
+    $absentSubmodules = @(git -C $repoRoot config --file .gitmodules --get-regexp '\.path$' |
+        ForEach-Object { [IO.Path]::GetFullPath((Join-Path $repoRoot ($_ -split ' ', 2)[1])) } |
+        Where-Object { -not (Test-Path -LiteralPath (Join-Path $_ '.git')) })
+}
+$inCode = $false
+for ($i = 0; $i -lt $lines.Count; $i++) {
+    if ($lines[$i].TrimStart().StartsWith('```')) { $inCode = -not $inCode; continue }
+    if ($inCode) { continue }
+    foreach ($m in [regex]::Matches($lines[$i], '\]\(([^)\s]+)\)')) {
+        $target = $m.Groups[1].Value
+        if ($target -match '^(https?:|mailto:|#)') { continue }
+        $file = [uri]::UnescapeDataString(($target -split '#')[0])
+        if (-not $file) { continue }
+        $full = if ($file.StartsWith('/')) { Join-Path $linkBase $file.TrimStart('/') } else { Join-Path $docDir $file }
+        $full = [IO.Path]::GetFullPath($full)
+        if (Test-Path -LiteralPath $full) { continue }
+        if ($absentSubmodules | Where-Object { $full.StartsWith($_ + [IO.Path]::DirectorySeparatorChar) }) { continue }
+        Add-Issue ($i + 1) "broken link '$target'"
+    }
+}
+
+if ($ExistingDesign) {
+    $h2 | Where-Object { $_.Title -match '^(problem|alternatives?\b|open questions|testing)' } |
+        ForEach-Object {
+            Add-Issue $_.Line "proposal section '$($_.Title)'; an existing-design doc describes what is built"
+        }
+
+    # Identifiers in backticks (names with an underscore, or code file names) must exist in the repo's code, before
+    # Future work, which may name planned parts.
+    $root = git -C $docDir rev-parse --show-toplevel 2>$null
+    $plannedFrom = $h2 | Where-Object { $_.Title -match '^(future work|references|appendix)' } | Select-Object -First 1
+    $idStop = if ($plannedFrom) { $plannedFrom.Line - 1 } else { $lines.Count }
+    if ($root) {
+        $seen = @{}
+        $inCode = $false
+        for ($i = 0; $i -lt $idStop; $i++) {
+            if ($lines[$i].TrimStart().StartsWith('```')) { $inCode = -not $inCode; continue }
+            if ($inCode) { continue }
+            foreach ($m in [regex]::Matches($lines[$i], '`([^`]+)`')) {
+                $id = $m.Groups[1].Value.Trim() -replace '\(\)$', ''
+                if ($seen.ContainsKey($id)) { continue }
+                $seen[$id] = $true
+                if ($id -match '^[\w./-]+\.(c|h|cpp|hpp|cs|rs)$') {
+                    $file = $id -replace '\\', '/' -replace '^\./', ''
+                    if (-not (git -C $root ls-files -- $file "*/$file")) {
+                        Add-Issue ($i + 1) "file ``$id`` not found in the repo"
+                    }
+                }
+                elseif ($id -match '^[A-Za-z_][A-Za-z0-9_]{3,}$' -and $id.Contains('_')) {
+                    git -C $root grep -q -w -F --recurse-submodules -e $id -- . ':(exclude)*.md' 2>$null
+                    if ($LASTEXITCODE -ne 0) {
+                        Add-Issue ($i + 1) "identifier ``$id`` not found in the code or its initialized submodules"
+                    }
+                }
+            }
+        }
+    }
+}
+
 if (-not $Existing) {
-    $last = -1
-    foreach ($h in $h2) {
-        $idx = -1
-        for ($k = 0; $k -lt $outline.Count; $k++) { if ($h.Title.StartsWith($outline[$k])) { $idx = $k; break } }
-        if ($idx -lt 0) { Add-Issue $h.Line "section '$($h.Title)' is not in the outline" }
-        elseif ($idx -lt $last) { Add-Issue $h.Line "section '$($h.Title)' is out of outline order" }
-        else { $last = $idx }
+    if (-not $ExistingDesign) {
+        $last = -1
+        foreach ($h in $h2) {
+            $idx = -1
+            for ($k = 0; $k -lt $outline.Count; $k++) { if ($h.Title.StartsWith($outline[$k])) { $idx = $k; break } }
+            if ($idx -lt 0) { Add-Issue $h.Line "section '$($h.Title)' is not in the outline" }
+            elseif ($idx -lt $last) { Add-Issue $h.Line "section '$($h.Title)' is out of outline order" }
+            else { $last = $idx }
+        }
     }
 
-    # Core length: words from the first section through Testing, not counting mermaid diagrams.
-    $coreMax = 2500
+    # Core length: words from the first section up to the optional trailing sections, not counting mermaid diagrams.
+    $coreMax = if ($ExistingDesign) { 1500 } else { 2500 }
+    $coreName = if ($ExistingDesign) { 'core (before Future work)' } else { 'core (Summary through Testing)' }
+    $trailing = if ($ExistingDesign) { '^(future work|references|appendix)' }
+        else { '^(alternative|open questions|appendix|references)' }
     $start = if ($h2) { $h2[0].Line - 1 } else { 0 }
-    $after = $h2 | Where-Object { $_.Title -match '^(alternative|open questions|appendix|references)' } | Select-Object -First 1
+    $after = $h2 | Where-Object { $_.Title -match $trailing } | Select-Object -First 1
     $stop = if ($after) { $after.Line - 1 } else { $lines.Count }
     $words = 0
     $fence = ''
@@ -150,7 +237,7 @@ if (-not $Existing) {
         if ($fence -ne 'xmermaid') { $words += @($t -split '\s+' | Where-Object { $_ }).Count }
     }
     if ($words -gt $coreMax) {
-        Add-Issue ($start + 1) "core (Summary through Testing) is $words words, over $coreMax; cut it or split the design"
+        Add-Issue ($start + 1) "$coreName is $words words, over $coreMax; cut it or move detail to a separate doc"
     }
 }
 
