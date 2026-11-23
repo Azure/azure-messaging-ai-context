@@ -54,7 +54,9 @@ the user to add.
 Design doc written with document-existing-design (azure-messaging-ai-context@<commit>) by <model>.
 ```
 
-- `<commit>`: `git log -1 --format=%h -- . '../../../plugins/azure-messaging-review/skills/*design*'` run in this
-  skill's folder, or `unversioned` if that prints nothing.
+- `<commit>`: the output of this command, run in this skill's folder, or `unversioned` if it prints nothing:
+  ```
+  git log -1 --format=%h -- . ../write-design-doc/lint_design_doc.ps1 '../../../plugins/azure-messaging-review/skills/*design*'
+  ```
 - `<model>`: the model name your instructions give. Add the reasoning effort or context window only if your
   instructions state it; never guess.
