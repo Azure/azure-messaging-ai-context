@@ -6,9 +6,9 @@ The design doc to check.
 .PARAMETER Existing
 The doc is an existing doc being edited, so its outline, line wrapping and top status line are not checked.
 .PARAMETER ExistingDesign
-The doc describes an existing design (the document-existing-design skill): it needs a verified line instead of a
-status line,
-has no proposal outline, a shorter core, and every identifier in backticks must exist in the repo's code.
+The doc describes an existing design (the document-existing-design skill): it needs a verified line instead of a status
+line and has no proposal outline and a shorter core. Every backticked name that contains an underscore, and every
+backticked C, C++, C# or Rust file name, must exist in the repo's code.
 #>
 param(
     [Parameter(Mandatory)] [string] $Path,
