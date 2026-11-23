@@ -110,7 +110,8 @@ if (-not $Existing) {
         $l = $lines[$i]
         $fence = $l.TrimStart().StartsWith('```')
         if ($fence) { $inCode = -not $inCode }
-        $isText = -not $inCode -and -not $fence -and $l.Trim() -and $l -notmatch '^\s*(#|\||>|<|=+\s*$|-{3,}\s*$)'
+        $isText = -not $inCode -and -not $fence -and $l.Trim() -and $l -notmatch '^\s*(#|\||>|<|=+\s*$|-{3,}\s*$)' -and
+            $l -notmatch '^(Parent|Status):|^Verified against code at '
         if (-not $isText -or $l -match '^\s*([-*+]|\d+[.)])\s') {
             Test-Wrap $para
             $para = @()
@@ -125,6 +126,11 @@ $verifiedLine = '^Verified against code at [0-9a-f]{7,40} \(\d{4}-\d{2}-\d{2}\)\
 if ($ExistingDesign) {
     if (-not ($lines -match $verifiedLine)) {
         Add-Issue 1 "missing 'Verified against code at <commit> (YYYY-MM-DD)' line"
+    }
+    for ($i = 0; $i -lt $lines.Count - 1; $i++) {
+        if ($lines[$i] -match '^Parent:' -and $lines[$i + 1].Trim()) {
+            Add-Issue ($i + 1) 'put a blank line after the Parent line, or Markdown joins it with the next line'
+        }
     }
 }
 elseif (-not $Existing -and -not ($lines -match $statusLine)) {

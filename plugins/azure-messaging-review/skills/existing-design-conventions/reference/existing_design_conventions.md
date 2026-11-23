@@ -33,6 +33,7 @@ any other top-level bullet in this file as a rule of its own.
     new doc where the repo keeps similar docs.
   - Start with the title, then `Parent: [name](link)` unless the doc is a root, then
     `Verified against code at <short commit> (YYYY-MM-DD)`, updated whenever someone checks the doc against the code.
+    Put a blank line between the header lines, or Markdown joins them into one paragraph.
   - This shape usually reads well. Adapt it to the part, and keep each sub-section to a few sentences or bullets:
     1. **Summary:** what the part does for its callers, what it includes, and where it sits in the system.
     2. **Core concepts:** the terms and ideas the rest of the doc uses, one or two sentences each, ordered so each
