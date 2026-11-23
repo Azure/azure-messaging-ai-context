@@ -172,7 +172,8 @@ if ($ExistingDesign) {
                 if ($seen.ContainsKey($id)) { continue }
                 $seen[$id] = $true
                 if ($id -match '^[\w./-]+\.(c|h|cpp|hpp|cs|rs)$') {
-                    if (-not (git -C $root ls-files -- "*$(Split-Path -Leaf $id)")) {
+                    $file = $id -replace '\\', '/' -replace '^\./', ''
+                    if (-not (git -C $root ls-files -- $file "*/$file")) {
                         Add-Issue ($i + 1) "file ``$id`` not found in the repo"
                     }
                 }
