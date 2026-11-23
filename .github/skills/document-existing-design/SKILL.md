@@ -29,7 +29,7 @@ and DD-ORDER, DD-CONTENT, DD-WORDS and DD-FORMAT in
    code, and report the claims the code contradicts or doesn't support, with the evidence. Claims about which module
    creates or owns another, which thread runs what, what happens on a failure, formats, what is built but unused, and
    which callers or cases a behavior covers are the ones drafts most often get wrong. Check each reported claim
-   yourself, fix or cut it, and repeat until a pass reports nothing wrong, at most twice. If you can't start a
+   yourself, fix or cut it, and repeat until a pass reports nothing wrong, at most two passes. If you can't start a
    sub-agent, do the same check yourself as a separate pass, claim by claim.
 7. **Check.** Run `../write-design-doc/lint_design_doc.ps1 -ExistingDesign` on each doc you wrote and fix every
    finding. Read each doc top to bottom as a teammate who knows the system but not this part, and cut what doesn't help
