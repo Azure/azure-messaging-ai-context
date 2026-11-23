@@ -178,8 +178,10 @@ if ($ExistingDesign) {
                     }
                 }
                 elseif ($id -match '^[A-Za-z_][A-Za-z0-9_]{3,}$' -and $id.Contains('_')) {
-                    git -C $root grep -q -w -F -e $id -- . ':(exclude)*.md' 2>$null
-                    if ($LASTEXITCODE -ne 0) { Add-Issue ($i + 1) "identifier ``$id`` not found in the code" }
+                    git -C $root grep -q -w -F --recurse-submodules -e $id -- . ':(exclude)*.md' 2>$null
+                    if ($LASTEXITCODE -ne 0) {
+                        Add-Issue ($i + 1) "identifier ``$id`` not found in the code or its initialized submodules"
+                    }
                 }
             }
         }
