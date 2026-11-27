@@ -21,7 +21,7 @@ Reference how-to documents live at `.github/howto/`. Unlike skills, these are no
 
 | Document | Use when... |
 |---|---|
-| [How to Build Azure Watson Search URLs](./howto/how_to_build_azure_watson_urls.md) | Hunting for a crash/hang dump in Azure Watson — when an investigation has narrowed to a specific ScaleUnit, RoleInstance, PID, process name, and/or time window. Covers the `portal.watson.azure.com` OData filter grammar, field reference, URL encoding rules, and worked examples for Service Bus / Event Grid / Block Storage / geo replication. |
+| [How to Build Azure Watson Search URLs](./howto/how_to_build_azure_watson_urls.md) | Hunting for a crash/hang dump in Azure Watson — when an investigation has narrowed to a specific ScaleUnit, RoleInstance, PID, process name, and/or time window. Covers the `portal.watson.azure.com` OData filter grammar, field reference, URL encoding rules, and worked examples. Agents with the `azure-watson` MCP should use it for known dumps and failures. |
 
 ## Git and Source Control Guidelines
 
